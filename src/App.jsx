@@ -4,7 +4,7 @@ import {
   Activity, ArrowDownRight, ArrowRight, ArrowUpRight, BarChart3, Bell, Bookmark,
   Building2, Check, ChevronDown, CircleHelp, Command, Compass, Database, Download,
   ExternalLink, Filter, Globe2, Layers3, MapPin, Menu, MessageSquareText, Search,
-  Send, Settings2, ShieldCheck, Sparkles, Target, TrendingUp, Users, X, Zap
+  Send, Settings2, ShieldCheck, Radar, Target, TrendingUp, Users, X, Zap
 } from 'lucide-react'
 
 const companies = [
@@ -40,7 +40,7 @@ const navItems = [
   { id: 'directory', label: 'GCC directory', icon: Building2 },
   { id: 'cities', label: 'City intelligence', icon: Globe2 },
   { id: 'signals', label: 'Market signals', icon: Activity },
-  { id: 'analyst', label: 'AI analyst', icon: Sparkles },
+  { id: 'analyst', label: 'AI analyst', icon: Radar },
   { id: 'library', label: 'Research library', icon: Database }
 ]
 
@@ -175,6 +175,8 @@ function MetricCard({ label, value, delta, icon: Icon, foot, bars, color = 'viol
 
 function App() {
   const [companyData, setCompanyData] = useState(companies)
+  const [landscape, setLandscape] = useState(null)
+  const [booting, setBooting] = useState(true)
   const [liveSignals, setLiveSignals] = useState([])
   const [signalsStatus, setSignalsStatus] = useState('Loading live news…')
   const [signalsUpdatedAt, setSignalsUpdatedAt] = useState(null)
@@ -194,6 +196,12 @@ function App() {
     { role: 'assistant', text: 'Hi. I’m your GCC research copilot. I can answer from current news coverage when the live feed is available. I will not invent city scores, hiring numbers, or market metrics.' }
   ])
   const [timeframe, setTimeframe] = useState('7 days')
+
+  useEffect(() => {
+    const boot = window.setTimeout(() => setBooting(false), 950)
+    fetch('/api/landscape').then(r => r.ok ? r.json() : Promise.reject()).then(d => setLandscape(d)).catch(() => setLandscape(null))
+    return () => window.clearTimeout(boot)
+  }, [])
 
   useEffect(() => {
     try { localStorage.setItem('gcc-intel-saved', JSON.stringify(saved)) } catch { /* storage may be unavailable */ }
@@ -228,7 +236,7 @@ function App() {
         if (!cancelled && Array.isArray(payload.data)) {
           setLiveSignals(payload.data)
           setSignalsUpdatedAt(payload.meta?.fetchedAt || new Date().toISOString())
-          setSignalsStatus(payload.meta?.live ? 'LIVE · GDELT · last 7 days' : 'Live feed unavailable')
+          setSignalsStatus(payload.meta?.live ? 'LIVE · ' + (payload.meta?.provider || 'NEWS') : 'Live feed unavailable')
         } else if (!cancelled) setSignalsStatus('Live feed returned no articles')
       })
       .catch(() => { if (!cancelled) { setLiveSignals([]); setSignalsStatus('Live feed unavailable · retry later') } })
@@ -246,7 +254,7 @@ function App() {
       if (!response.ok) throw new Error(payload.error || 'Feed unavailable')
       setLiveSignals(Array.isArray(payload.data) ? payload.data : [])
       setSignalsUpdatedAt(payload.meta?.fetchedAt || new Date().toISOString())
-      setSignalsStatus(payload.data?.length ? 'LIVE · GDELT · last 7 days' : 'No matching articles found')
+      setSignalsStatus(payload.data?.length ? 'LIVE · ' + (payload.meta?.provider || 'NEWS') : 'No matching articles found')
     } catch {
       setLiveSignals([])
       setSignalsStatus('Live feed is unreachable · try again shortly')
@@ -351,11 +359,19 @@ function App() {
           <div className="eyebrow"><span className="eyebrow-line"/> GCC INTELLIGENCE / INDIA <span className="eyebrow-pill">BETA 01</span></div>
           <h1>See the future<br/>of <span>global capability.</span></h1>
           <p className="hero-description">Live GCC news, company research, and AI-powered discovery — in one workspace.</p>
-          <div className="hero-buttons"><button className="primary-button" onClick={() => jump('directory')}>Explore the ecosystem <ArrowRight size={16}/></button><button className="secondary-button" onClick={() => jump('analyst')}><Sparkles size={15}/> Ask the AI analyst</button></div>
+          <div className="hero-buttons"><button className="primary-button" onClick={() => jump('directory')}>Explore the ecosystem <ArrowRight size={16}/></button><button className="secondary-button" onClick={() => jump('analyst')}><Radar size={15}/> Ask the AI analyst</button></div>
           <div className="hero-proof"><div className="proof-avatars"><span>G</span><span>M</span><span>A</span><span>+</span></div><div><strong>Research that leads somewhere.</strong><span>Live news · Company research · Research copilot</span></div></div>
         </div>
         <div className="hero-visual"><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="globe-glow"/><GlobeScene/><div className="float-tag tag-north"><span className="tag-pulse"/> INDIA / LIVE SIGNALS</div><div className="float-tag tag-east"><MapPin size={13}/> HYDERABAD <b>NEWS</b></div><div className="float-tag tag-south"><MapPin size={13}/> BENGALURU <b>HUB</b></div><div className="globe-caption"><span>GLOBAL NETWORK</span><span>17°23′N · 78°29′E</span></div></div>
         <div className="hero-bottom-line"><span>INTELLIGENCE THAT MOVES WITH YOU</span><span>SCROLL TO EXPLORE <ArrowDownRight size={14}/></span></div>
+      </section>
+
+      {booting && <div className="brand-loader" role="status" aria-label="Loading GCC Intelligence"><div className="loader-mark"><i/><i/><i/></div><div className="loader-wordmark">gcc<span>intel</span></div><div className="loader-track"><span/></div><small>CONNECTING TO LIVE INTELLIGENCE</small></div>}
+
+      <section className="content-section landscape-section" id="landscape">
+        <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> INDUSTRY SNAPSHOT · FY26</div><h2>The market, in numbers.</h2><p className="section-subtitle">Published India GCC landscape estimates, with direct source links — separate from live news mentions.</p></div><span className="source-stamp"><ShieldCheck size={13}/> SOURCED DATA</span></div>
+        <div className="landscape-metrics">{(landscape?.metrics || [{label:'GCCs in India',value:'2,117',detail:'FY26 estimate'},{label:'GCC units',value:'3,728',detail:'Across India'},{label:'Professionals',value:'2.36M',detail:'Installed talent'},{label:'Market revenue',value:'$98.4B',detail:'FY26 estimate'}]).map((metric,i) => <article className="landscape-metric" key={metric.label} style={{'--metric-delay':(i*75)+'ms'}}><span className="metric-index">0{i+1}</span><div className="landscape-value">{metric.value}</div><strong>{metric.label}</strong><span className="landscape-detail">{metric.detail}</span></article>)}</div>
+        <div className="landscape-source-row"><div><Database size={15}/><span>{landscape?.sourceLabel || 'NASSCOM–Zinnov · India GCC Landscape Report 2026'}</span></div><a href={landscape?.sourceUrl || 'https://www.prnewswire.com/in/news-releases/india-s-gccs-are-increasingly-leading-the-ai-mandate-for-global-enterprises-driving-global-value-creation-nasscom--zinnov-report-302817463.html'} target="_blank" rel="noreferrer">Open source <ExternalLink size={13}/></a><span className="source-date">{landscape?.publishedAt || 'Published 3 Jul 2026'}</span></div>
       </section>
 
       <section className="content-section" id="signals">
@@ -364,7 +380,7 @@ function App() {
         <div className="panel signal-panel live-news-panel">
           <div className="panel-heading"><div><span className="panel-kicker">LIVE NEWS MONITOR</span><h3>Latest GCC intelligence signals.</h3></div><span className="demo-label">{liveSignals.length} ARTICLES</span></div>
           {liveSignals.length ? <div className="signal-list">{liveSignals.slice(0, 12).map(item => <article className="signal-item" key={item.id || item.url}><div className="signal-symbol purple"><Activity size={16}/></div><div className="signal-text"><strong><a href={item.url} target="_blank" rel="noreferrer">{item.title}</a></strong><p>{item.domain}{item.publishedAt ? ' · ' + item.publishedAt : ''}</p><span className="signal-tag">GDELT · LIVE NEWS</span></div><a className="icon-button" href={item.url} target="_blank" rel="noreferrer" aria-label="Open source article"><ExternalLink size={15}/></a></article>)}</div> : <div className="empty-state live-empty-state"><span className="empty-glass-icon"><Activity size={22}/></span><strong>{signalsRetrying ? 'Reconnecting to live news…' : 'No live headlines received'}</strong><span>We only show publisher-linked articles. No placeholder headlines or fabricated metrics.</span><button className="secondary-button compact" onClick={retryLiveSignals} disabled={signalsRetrying}><Activity size={14}/>{signalsRetrying ? 'Retrying…' : 'Retry live feed'}</button></div>}
-          <div className="chart-foot"><span>Source: GDELT DOC 2.0 public news index</span><span>{signalsUpdatedAt ? 'Updated ' + new Date(signalsUpdatedAt).toLocaleString() : 'Waiting for feed'}</span></div>
+          <div className="chart-foot"><span>Source: Public news index · provider shown above</span><span>{signalsUpdatedAt ? 'Updated ' + new Date(signalsUpdatedAt).toLocaleString() : 'Waiting for feed'}</span></div>
         </div>
       </section>
 
@@ -392,8 +408,8 @@ function App() {
 
       <section className="content-section analyst-section" id="analyst">
         <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> RESEARCH COPILOT</div><h2>Ask better questions.</h2><p className="section-subtitle">Grounded research answers using current news evidence when available.</p></div><div className="ai-status"><span/> SOURCE-GROUNDED / LIVE AI</div></div>
-        <div className="analyst-layout"><div className="analyst-intro"><div className="ai-orb"><div className="ai-orb-inner"><Sparkles size={28}/></div><span className="orb-ring ring-a"/><span className="orb-ring ring-b"/></div><h3>Research, without<br/><span>the blank page.</span></h3><p>Use prompts to shape a city shortlist, identify sector clusters, or turn an emerging signal into a structured research brief.</p><div className="capability-list"><span><Check size={14}/> City comparisons</span><span><Check size={14}/> Company discovery</span><span><Check size={14}/> Research brief drafts</span></div><div className="connect-note"><Database size={15}/><span>AI answers use the configured server endpoint and available current news. Unsupported market claims are not invented.</span></div></div>
-          <div className="panel chat-panel"><div className="chat-header"><div className="chat-avatar"><Sparkles size={16}/></div><div><strong>GCC Research Analyst</strong><span><i/> AI analyst · Current news evidence</span></div><button className="icon-button" onClick={() => setMessages([{role:'assistant',text:'Hi. I’m your GCC research copilot. I can answer from current news coverage when the live feed is available. I will not invent city scores, hiring numbers, or market metrics.'}])} title="Reset chat"><Activity size={16}/></button></div><div className="chat-messages">{messages.map((m,i) => <div className={'chat-message ' + m.role} key={i}>{m.role === 'assistant' && <div className="message-avatar"><Sparkles size={13}/></div>}<div className="message-bubble">{m.text}</div></div>)}</div><div className="prompt-chips"><button onClick={() => ask('Compare Bengaluru and Hyderabad for an AI GCC')}>Compare tech hubs <ArrowUpRight size={12}/></button><button onClick={() => ask('Which cities are more affordable?')}>Explore cost signals <ArrowUpRight size={12}/></button><button onClick={() => ask('Build a BFSI company shortlist')}>Find BFSI companies <ArrowUpRight size={12}/></button></div><form className="chat-input-row" onSubmit={e => {e.preventDefault(); ask()}}><input value={question} onChange={e => setQuestion(e.target.value)} placeholder="Ask about cities, companies or sector signals…"/><button type="submit" disabled={!question.trim() || isAsking} aria-label="Send message"><Send size={16}/></button></form><div className="chat-footnote">Server-side AI endpoint · Responses can be wrong; verify important claims.</div><div style={{padding:'0 14px 14px',display:'flex',justifyContent:'flex-end'}}><button className="text-button" onClick={saveLatestReport} disabled={isAsking || messages[messages.length - 1]?.text === 'Thinking…'}><Bookmark size={13}/> Save latest answer</button></div></div></div>
+        <div className="analyst-layout"><div className="analyst-intro"><div className="ai-orb"><div className="ai-orb-inner"><Radar size={28}/></div><span className="orb-ring ring-a"/><span className="orb-ring ring-b"/></div><h3>Research, without<br/><span>the blank page.</span></h3><p>Use prompts to shape a city shortlist, identify sector clusters, or turn an emerging signal into a structured research brief.</p><div className="capability-list"><span><Check size={14}/> City comparisons</span><span><Check size={14}/> Company discovery</span><span><Check size={14}/> Research brief drafts</span></div><div className="connect-note"><Database size={15}/><span>AI answers use the configured server endpoint and available current news. Unsupported market claims are not invented.</span></div></div>
+          <div className="panel chat-panel"><div className="chat-header"><div className="chat-avatar"><Radar size={16}/></div><div><strong>GCC Research Analyst</strong><span><i/> AI analyst · Current news evidence</span></div><button className="icon-button" onClick={() => setMessages([{role:'assistant',text:'Hi. I’m your GCC research copilot. I can answer from current news coverage when the live feed is available. I will not invent city scores, hiring numbers, or market metrics.'}])} title="Reset chat"><Activity size={16}/></button></div><div className="chat-messages">{messages.map((m,i) => <div className={'chat-message ' + m.role} key={i}>{m.role === 'assistant' && <div className="message-avatar"><Radar size={13}/></div>}<div className="message-bubble">{m.text}</div></div>)}</div><div className="prompt-chips"><button onClick={() => ask('Compare Bengaluru and Hyderabad for an AI GCC')}>Compare tech hubs <ArrowUpRight size={12}/></button><button onClick={() => ask('Which cities are more affordable?')}>Explore cost signals <ArrowUpRight size={12}/></button><button onClick={() => ask('Build a BFSI company shortlist')}>Find BFSI companies <ArrowUpRight size={12}/></button></div><form className="chat-input-row" onSubmit={e => {e.preventDefault(); ask()}}><input value={question} onChange={e => setQuestion(e.target.value)} placeholder="Ask about cities, companies or sector signals…"/><button type="submit" disabled={!question.trim() || isAsking} aria-label="Send message"><Send size={16}/></button></form><div className="chat-footnote">Server-side AI endpoint · Responses can be wrong; verify important claims.</div><div style={{padding:'0 14px 14px',display:'flex',justifyContent:'flex-end'}}><button className="text-button" onClick={saveLatestReport} disabled={isAsking || messages[messages.length - 1]?.text === 'Thinking…'}><Bookmark size={13}/> Save latest answer</button></div></div></div>
       </section>
 
       <section className="content-section" id="library">
@@ -405,7 +421,7 @@ function App() {
           </article>
           <article className="panel city-panel">
             <div className="panel-heading"><div><span className="panel-kicker">RESEARCH REPORTS</span><h3>Saved AI answers</h3></div><span className="demo-label">{reports.length} REPORTS</span></div>
-            {reports.length ? <div className="signal-list">{reports.map(report => <div className="signal-item" key={report.id}><div className="signal-symbol blue"><Sparkles size={16}/></div><div className="signal-text"><strong>{report.title}</strong><p>{report.body}</p><span className="signal-tag">{new Date(report.created_at).toLocaleDateString()}</span></div><button className="icon-button" onClick={() => deleteReport(report)} aria-label="Delete report"><X size={14}/></button></div>)}</div> : <div className="empty-state"><Database size={20}/><strong>No reports saved</strong><span>Ask the AI analyst a question, then choose “Save latest answer”.</span><button className="text-button" onClick={() => jump('analyst')}>Open AI analyst <ArrowRight size={13}/></button></div>}
+            {reports.length ? <div className="signal-list">{reports.map(report => <div className="signal-item" key={report.id}><div className="signal-symbol blue"><Radar size={16}/></div><div className="signal-text"><strong>{report.title}</strong><p>{report.body}</p><span className="signal-tag">{new Date(report.created_at).toLocaleDateString()}</span></div><button className="icon-button" onClick={() => deleteReport(report)} aria-label="Delete report"><X size={14}/></button></div>)}</div> : <div className="empty-state"><Database size={20}/><strong>No reports saved</strong><span>Ask the AI analyst a question, then choose “Save latest answer”.</span><button className="text-button" onClick={() => jump('analyst')}>Open AI analyst <ArrowRight size={13}/></button></div>}
           </article>
         </div>
         <p className="section-subtitle" style={{marginTop:14}}>Cloud persistence requires a Neon PostgreSQL DATABASE_URL. Without it, saved items use local/session fallback.</p>
