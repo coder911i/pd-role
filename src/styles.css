@@ -315,7 +315,7 @@ body {
 .primary-button:hover { box-shadow: 0 10px 32px rgba(183,165,255,.25); }
 .secondary-button { color: #fff; border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.045); }
 .secondary-button:hover { border-color: #b7a5ff; background: rgba(183,165,255,.1); }
-.live-pill { color: #f1f3f7; }
+.live-pill { color: #355b25; }
 .eyebrow-line { background: linear-gradient(90deg, #b7a5ff, #71e2ff); }
 .eyebrow-pill, .nav-new { color: #d5ccff; border-color: rgba(183,165,255,.5); background: rgba(183,165,255,.12); }
 .select-wrap, .filter-select, .search-box { border-color: rgba(255,255,255,.18); background: #080809; }
