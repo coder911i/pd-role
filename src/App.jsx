@@ -353,7 +353,7 @@ function App() {
     </aside>
 
     <main className="main">
-      <header className="topbar"><button className="mobile-menu icon-button" onClick={() => setMobileNav(true)}><Menu size={19}/></button><div className="breadcrumbs"><span>Workspace</span><span className="crumb-slash">/</span><strong>{navItems.find(n => n.id === active)?.label || 'Overview'}</strong></div><div className="top-actions"><div className="live-pill"><span/> {signalsStatus}</div><button className="icon-button notification" aria-label="Notifications"><Bell size={17}/><i/></button><div className="top-avatar">TS</div></div></header>
+      <header className="topbar"><button className="mobile-menu icon-button" onClick={() => setMobileNav(true)}><Menu size={19}/></button><div className="breadcrumbs"><span>Workspace</span><span className="crumb-slash">/</span><strong>{navItems.find(n => n.id === active)?.label || 'Overview'}</strong></div><div className="top-actions"><div className="live-pill"><span/> {signalsStatus}</div><button className="icon-button notification" onClick={() => jump('signals')} aria-label="Open live signal feed" title="Open live signal feed"><Bell size={17}/><i/></button><div className="top-avatar">TS</div></div></header>
 
       <section className="hero" id="overview">
         <div className="hero-copy">
