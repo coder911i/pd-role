@@ -173,6 +173,7 @@ function MetricCard({ label, value, delta, icon: Icon, foot, bars, color = 'viol
 }
 
 function App() {
+  const [companyData, setCompanyData] = useState(companies)
   const [active, setActive] = useState('overview')
   const [query, setQuery] = useState('')
   const [sector, setSector] = useState('All sectors')
@@ -186,7 +187,16 @@ function App() {
   ])
   const [timeframe, setTimeframe] = useState('12 months')
 
-  const filteredCompanies = useMemo(() => companies.filter(c =>
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/directory')
+      .then(response => response.ok ? response.json() : Promise.reject(new Error('Directory API unavailable')))
+      .then(payload => { if (!cancelled && Array.isArray(payload.data)) setCompanyData(payload.data) })
+      .catch(() => { /* Keep the bundled demo data available when running without serverless functions. */ })
+    return () => { cancelled = true }
+  }, [])
+
+  const filteredCompanies = useMemo(() => companyData.filter(c =>
     (c.name + ' ' + c.sector + ' ' + c.city + ' ' + c.signal).toLowerCase().includes(query.toLowerCase()) &&
     (sector === 'All sectors' || c.sector === sector) &&
     (city === 'All cities' || c.city === city)
