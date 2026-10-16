@@ -48,7 +48,7 @@ Configure these environment variables in **Vercel → Project → Settings → E
 | Variable | Required | Purpose |
 |---|---|---|
 | `GROQ_API_KEY` | For live AI | Groq API key, server-side only |
-| `GROQ_MODEL` | Optional | Defaults to `llama-3.3-70b-versatile` |
+| `GROQ_MODEL` | Optional | Defaults to `openai/gpt-oss-120b` |
 | `DATABASE_URL_POOLED` | Recommended for Vercel | Neon pooled PostgreSQL connection string |
 | `DATABASE_URL` | Optional fallback | Neon direct PostgreSQL connection string |
 | `SESSION_SECRET` | For saved-data sessions | Long random secret used to sign the HTTP-only session cookie |
