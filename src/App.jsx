@@ -218,7 +218,7 @@ function App() {
       .then(response => response.ok ? response.json() : Promise.reject(new Error('Directory API unavailable')))
       .then(payload => { if (!cancelled && Array.isArray(payload.data)) setCompanyData(payload.data) })
       .catch(() => { if (!cancelled) setCompanyData([]) })
-    fetch('/api/signals')
+    const loadLiveSignals = () => fetch('/api/signals')
       .then(response => response.ok ? response.json() : Promise.reject(new Error('Live news unavailable')))
       .then(payload => {
         if (!cancelled && Array.isArray(payload.data)) {
@@ -228,7 +228,9 @@ function App() {
         } else if (!cancelled) setSignalsStatus('Live feed returned no articles')
       })
       .catch(() => { if (!cancelled) { setLiveSignals([]); setSignalsStatus('Live feed unavailable · retry later') } })
-    return () => { cancelled = true }
+    loadLiveSignals()
+    const refreshId = setInterval(loadLiveSignals, 5 * 60 * 1000)
+    return () => { cancelled = true; clearInterval(refreshId) }
   }, [])
 
   const citySignalCount = cityName => liveSignals.filter(item => (item.title + ' ' + item.domain).toLowerCase().includes(cityName.toLowerCase())).length
