@@ -185,6 +185,7 @@ function App() {
   const [reportStatus, setReportStatus] = useState('Loading saved research…')
   const [mobileNav, setMobileNav] = useState(false)
   const [question, setQuestion] = useState('')
+  const [isAsking, setIsAsking] = useState(false)
   const [messages, setMessages] = useState([
     { role: 'assistant', text: 'Hi. I’m your GCC research copilot. Ask me to compare cities, map competitors, or build a shortlist. I’ll keep this prototype’s sample data clearly labelled.' }
   ])
@@ -225,7 +226,8 @@ function App() {
 
   const ask = async (text = question) => {
     const q = text.trim()
-    if (!q) return
+    if (!q || isAsking) return
+    setIsAsking(true)
     let answer = 'Based on the illustrative sample dataset, start with Bengaluru and Hyderabad for a broad technology-led GCC search, then validate role mix, hiring activity, compensation, and office footprint against current primary sources before making a decision.'
     const lower = q.toLowerCase()
     if (lower.includes('cheapest') || lower.includes('cost') || lower.includes('affordable')) answer = 'In this prototype’s illustrative cost index, Chennai (88), Pune (86), and Hyderabad (82) score above Bengaluru (74). These are directional demo indices—not real estate quotes or verified salary benchmarks. Validate current compensation and occupancy costs before shortlisting.'
@@ -246,6 +248,8 @@ function App() {
       setMessages(prev => prev.map((m, i) => i === prev.length - 1 && m.text === 'Thinking…' ? { ...m, text: data.answer } : m))
     } catch {
       setMessages(prev => prev.map((m, i) => i === prev.length - 1 && m.text === 'Thinking…' ? { ...m, text: answer + ' (Local demo response — configure GROQ_API_KEY on the server to enable live answers.)' } : m))
+    } finally {
+      setIsAsking(false)
     }
   }
 
@@ -355,7 +359,7 @@ function App() {
       <section className="content-section analyst-section" id="analyst">
         <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> RESEARCH COPILOT</div><h2>Ask better questions.</h2><p className="section-subtitle">A conversational interface ready to connect to your Groq API.</p></div><div className="ai-status"><span/> GROQ-READY / SERVER KEY REQUIRED</div></div>
         <div className="analyst-layout"><div className="analyst-intro"><div className="ai-orb"><div className="ai-orb-inner"><Sparkles size={28}/></div><span className="orb-ring ring-a"/><span className="orb-ring ring-b"/></div><h3>Research, without<br/><span>the blank page.</span></h3><p>Use prompts to shape a city shortlist, identify sector clusters, or turn an emerging signal into a structured research brief.</p><div className="capability-list"><span><Check size={14}/> City comparisons</span><span><Check size={14}/> Company discovery</span><span><Check size={14}/> Research brief drafts</span></div><div className="connect-note"><Database size={15}/><span>Demo responses are local. Add your Groq endpoint on the server before enabling live AI.</span></div></div>
-          <div className="panel chat-panel"><div className="chat-header"><div className="chat-avatar"><Sparkles size={16}/></div><div><strong>GCC Research Analyst</strong><span><i/> Groq endpoint · Demo market data</span></div><button className="icon-button" onClick={() => setMessages([{role:'assistant',text:'Hi. I’m your GCC research copilot. Ask me to compare cities, map competitors, or build a shortlist. I’ll keep this prototype’s sample data clearly labelled.'}])} title="Reset chat"><Activity size={16}/></button></div><div className="chat-messages">{messages.map((m,i) => <div className={'chat-message ' + m.role} key={i}>{m.role === 'assistant' && <div className="message-avatar"><Sparkles size={13}/></div>}<div className="message-bubble">{m.text}</div></div>)}</div><div className="prompt-chips"><button onClick={() => ask('Compare Bengaluru and Hyderabad for an AI GCC')}>Compare tech hubs <ArrowUpRight size={12}/></button><button onClick={() => ask('Which cities are more affordable?')}>Explore cost signals <ArrowUpRight size={12}/></button><button onClick={() => ask('Build a BFSI company shortlist')}>Find BFSI companies <ArrowUpRight size={12}/></button></div><form className="chat-input-row" onSubmit={e => {e.preventDefault(); ask()}}><input value={question} onChange={e => setQuestion(e.target.value)} placeholder="Ask about cities, companies or sector signals…"/><button type="submit" disabled={!question.trim()} aria-label="Send message"><Send size={16}/></button></form><div className="chat-footnote">Server-side AI endpoint · Responses can be wrong; verify important claims.</div><div style={{padding:'0 14px 14px',display:'flex',justifyContent:'flex-end'}}><button className="text-button" onClick={saveLatestReport} disabled={messages[messages.length - 1]?.text === 'Thinking…'}><Bookmark size={13}/> Save latest answer</button></div></div></div>
+          <div className="panel chat-panel"><div className="chat-header"><div className="chat-avatar"><Sparkles size={16}/></div><div><strong>GCC Research Analyst</strong><span><i/> Groq endpoint · Demo market data</span></div><button className="icon-button" onClick={() => setMessages([{role:'assistant',text:'Hi. I’m your GCC research copilot. Ask me to compare cities, map competitors, or build a shortlist. I’ll keep this prototype’s sample data clearly labelled.'}])} title="Reset chat"><Activity size={16}/></button></div><div className="chat-messages">{messages.map((m,i) => <div className={'chat-message ' + m.role} key={i}>{m.role === 'assistant' && <div className="message-avatar"><Sparkles size={13}/></div>}<div className="message-bubble">{m.text}</div></div>)}</div><div className="prompt-chips"><button onClick={() => ask('Compare Bengaluru and Hyderabad for an AI GCC')}>Compare tech hubs <ArrowUpRight size={12}/></button><button onClick={() => ask('Which cities are more affordable?')}>Explore cost signals <ArrowUpRight size={12}/></button><button onClick={() => ask('Build a BFSI company shortlist')}>Find BFSI companies <ArrowUpRight size={12}/></button></div><form className="chat-input-row" onSubmit={e => {e.preventDefault(); ask()}}><input value={question} onChange={e => setQuestion(e.target.value)} placeholder="Ask about cities, companies or sector signals…"/><button type="submit" disabled={!question.trim() || isAsking} aria-label="Send message"><Send size={16}/></button></form><div className="chat-footnote">Server-side AI endpoint · Responses can be wrong; verify important claims.</div><div style={{padding:'0 14px 14px',display:'flex',justifyContent:'flex-end'}}><button className="text-button" onClick={saveLatestReport} disabled={isAsking || messages[messages.length - 1]?.text === 'Thinking…'}><Bookmark size={13}/> Save latest answer</button></div></div></div>
       </section>
 
       <section className="content-section" id="library">
