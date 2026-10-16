@@ -12,7 +12,8 @@ function signature(id) {
 export function readSession(req) {
   const raw = String(req.headers.cookie || '').split(';').map(v => v.trim()).find(v => v.startsWith(COOKIE + '='))
   if (!raw) return null
-  const token = decodeURIComponent(raw.slice(COOKIE.length + 1))
+  let token
+  try { token = decodeURIComponent(raw.slice(COOKIE.length + 1)) } catch { return null }
   const splitAt = token.lastIndexOf('.')
   if (splitAt < 1) return null
   const id = token.slice(0, splitAt)
