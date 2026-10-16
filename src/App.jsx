@@ -301,8 +301,9 @@ function App() {
       const data = await response.json()
       if (!response.ok || !data.answer) throw new Error(data.error || 'AI endpoint is not configured')
       setMessages(prev => prev.map((m, i) => i === prev.length - 1 && m.text === 'Thinking…' ? { ...m, text: data.answer } : m))
-    } catch {
-      setMessages(prev => prev.map((m, i) => i === prev.length - 1 && m.text === 'Thinking…' ? { ...m, text: 'Live AI is unavailable right now. Check that GROQ_API_KEY is configured in Vercel, then retry. No demo answer was substituted.' } : m))
+    } catch (error) {
+      const message = error instanceof Error && error.message ? error.message : 'Unknown request error. Check the Vercel function logs.'
+      setMessages(prev => prev.map((m, i) => i === prev.length - 1 && m.text === 'Thinking…' ? { ...m, text: `AI request failed: ${message}` } : m))
     } finally {
       setIsAsking(false)
     }
