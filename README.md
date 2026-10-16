@@ -10,7 +10,7 @@
 [![Build](https://img.shields.io/github/actions/workflow/status/coder911i/pd-role/ci.yml?branch=main&style=for-the-badge&label=CI)](https://github.com/coder911i/pd-role/actions)
 [![License](https://img.shields.io/badge/License-Not%20specified-64748b?style=for-the-badge)](#project-status)
 
-[Live app](https://pd-role.vercel.app) · [Architecture](docs/ARCHITECTURE.md) · [Production checklist](docs/PRODUCTION_CHECKLIST.md) · [Pitch deck brief](docs/PITCH_DECK_PROMPT.md)
+[Live app](https://pd-role.vercel.app) · [Product brief](docs/PRODUCT_BRIEF.md) · [Research & decisions](docs/RESEARCH_AND_DECISIONS.md) · [Architecture](docs/ARCHITECTURE.md) · [Production checklist](docs/PRODUCTION_CHECKLIST.md) · [Final deck notes](docs/FINAL_ASSIGNMENT_DECK.md)
 
 </div>
 
@@ -108,7 +108,7 @@ api/                 Serverless API routes and shared utilities
 src/                 React application, styles, and frontend helpers
 src/lib/             Reusable helpers with deterministic behavior
 tests/               Unit and API contract tests
-docs/                Architecture, production checklist, deck brief
+docs/                Architecture, product brief, research standards, production checklist, deck notes
 assets/              README product-preview artwork
 .github/workflows/   CI build and test workflow
 ```
@@ -139,7 +139,14 @@ See [Production checklist](docs/PRODUCTION_CHECKLIST.md).
 
 ## Product context
 
-This repository supports a product-analysis exercise comparing Bengaluru and Hyderabad for an AI-focused GCC. It is an independent project and is **not affiliated with or endorsed by Swiggy**. Any assignment submission should clearly distinguish sourced facts, assumptions, estimates, and recommendations.
+This repository supports a product-analysis exercise comparing Bengaluru and Hyderabad for an AI-focused GCC. It is an independent assignment project and is **not affiliated with or endorsed by Flexiple or Swiggy**. Any assignment submission should clearly distinguish sourced facts, assumptions, estimates, and recommendations.
+
+## Product and assignment artifacts
+
+- [Product brief](docs/PRODUCT_BRIEF.md) — ICP hypothesis, JTBD, MVP scope, metrics and validation plan.
+- [Research and decisions](docs/RESEARCH_AND_DECISIONS.md) — evidence labels, data integrity rules and prioritisation rationale.
+- [Final assignment deck notes](docs/FINAL_ASSIGNMENT_DECK.md) — deck narrative and explicit prototype-screenshot limitation.
+- The editable PowerPoint and PDF companion are supplied as assignment deliverables alongside this repository. The deck's product walkthrough is labelled as a schematic where a real browser screenshot was unavailable.
 
 ## Project status
 
