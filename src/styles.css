@@ -248,3 +248,86 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* Classic black-and-white typography refresh */
+:root {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+  color: #f8fafc;
+  --bg: #050505;
+  --panel: #0b0b0c;
+  --panel-2: #111113;
+  --line: rgba(255,255,255,.13);
+  --muted: #c2c5ce;
+  --muted-2: #9296a2;
+  --purple: #b7a5ff;
+  --cyan: #71e2ff;
+  --green: #86efc3;
+  --orange: #ffc27a;
+}
+html { scroll-behavior: smooth; }
+body {
+  color: #f8fafc;
+  background: #050505;
+  background-image: radial-gradient(ellipse at 78% 0%, rgba(118,95,255,.09), transparent 36%);
+}
+::selection { color: #050505; background: #b7a5ff; }
+:focus-visible { outline: 2px solid #71e2ff !important; outline-offset: 3px; }
+.sidebar { background: rgba(5,5,6,.97); }
+.main { color: #f8fafc; }
+.topbar { background: rgba(5,5,6,.94); }
+.hero {
+  background:
+    radial-gradient(ellipse at 80% 42%, rgba(120,99,255,.13), transparent 43%),
+    linear-gradient(110deg, #050505 0%, #09090b 65%, #0d0b16 100%);
+}
+.hero:before { background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); }
+.hero h1 { color: #fff; font-weight: 750; letter-spacing: -2.7px; }
+.hero h1 span {
+  background: linear-gradient(100deg, #fff 0%, #c5b9ff 42%, #71e2ff 100%);
+  background-clip: text; -webkit-background-clip: text; color: transparent;
+}
+.hero-description, .section-subtitle, .signal-text p, .workspace span, .profile-info span { color: #c2c5ce; }
+.brand-name { color: #fff; letter-spacing: -.65px; }
+.brand-name span { color: #b7a5ff; }
+.brand-sub, .nav-label, .metric-label, th, .eyebrow, .panel-kicker { color: #b1b5c1; }
+.nav-item { color: #d1d5df; }
+.nav-item:hover { color: #fff; background: rgba(255,255,255,.07); }
+.nav-item.active {
+  color: #fff;
+  background: linear-gradient(90deg, rgba(183,165,255,.2), rgba(113,226,255,.06));
+  box-shadow: inset 2px 0 #b7a5ff;
+}
+.nav-item.active svg, .text-button, .panel-bottom-link { color: #c5b9ff; }
+.workspace, .panel, .metric-card {
+  border-color: rgba(255,255,255,.14);
+  background: linear-gradient(145deg, #111113, #09090a);
+}
+.metric-card:hover { border-color: rgba(183,165,255,.6); }
+.metric-value-row>strong, .section-heading h2, .panel-heading h3 { color: #fff; }
+.metric-foot, .chart-foot, .city-rank, .signal-tag, .company-cell span { color: #aeb3c0; }
+.city-name, td, .company-cell strong, .signal-text strong { color: #f1f3f7; }
+.primary-button {
+  color: #050505;
+  border-color: #c5b9ff;
+  background: linear-gradient(110deg, #d1c8ff, #8feaff);
+  box-shadow: 0 8px 28px rgba(113,226,255,.12);
+}
+.primary-button:hover { box-shadow: 0 10px 32px rgba(183,165,255,.25); }
+.secondary-button { color: #fff; border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.045); }
+.secondary-button:hover { border-color: #b7a5ff; background: rgba(183,165,255,.1); }
+.live-pill { color: #f1f3f7; }
+.eyebrow-line { background: linear-gradient(90deg, #b7a5ff, #71e2ff); }
+.eyebrow-pill, .nav-new { color: #d5ccff; border-color: rgba(183,165,255,.5); background: rgba(183,165,255,.12); }
+.select-wrap, .filter-select, .search-box { border-color: rgba(255,255,255,.18); background: #080809; }
+.select-wrap>span, .select-wrap select, .filter-select select { color: #e1e4ec; }
+.search-box input { color: #fff; }
+.search-box input::placeholder, .chat-input-row input::placeholder { color: #9ca3af; }
+.bar-track { background: rgba(255,255,255,.12); }
+.signal-item, td { border-color: rgba(255,255,255,.11); }
+.chat-panel, .analyst-intro { color: #f8fafc; }
+.chat-message .message-bubble { color: #f8fafc; }
+button, input, select, textarea { accent-color: #b7a5ff; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
