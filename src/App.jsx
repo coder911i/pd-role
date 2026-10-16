@@ -37,6 +37,7 @@ const cityData = [
 
 const navItems = [
   { id: 'overview', label: 'Overview', icon: Layers3 },
+  { id: 'landscape', label: 'Market overview', icon: BarChart3 },
   { id: 'directory', label: 'GCC directory', icon: Building2 },
   { id: 'cities', label: 'City intelligence', icon: Globe2 },
   { id: 'signals', label: 'Market signals', icon: Activity },
