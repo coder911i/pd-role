@@ -55,6 +55,10 @@ Configure these environment variables in **Vercel → Project → Settings → E
 
 After adding variables, redeploy. Never create a `VITE_GROQ_API_KEY` variable; Vite-exposed values are public.
 
+## Repository structure
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the folder map, runtime flows, and local verification steps. Frontend helpers that need deterministic behaviour should live in `src/lib/` and have focused tests under `tests/`.
+
 ## API reference
 
 - `GET /api/health` — service and AI configuration status (does not expose secrets).
@@ -73,7 +77,7 @@ The saved-company and report endpoints require `DATABASE_URL_POOLED` or `DATABAS
 
 ## Quality and data integrity
 
-GitHub Actions runs `npm install`, `npm run build`, and `npm test` on pushes and pull requests. The test suite currently checks session cookie signing and rejection of malformed signatures. A green CI run is required before calling a change verified; check the Actions tab after a push.
+GitHub Actions runs `npm install`, `npm run build`, and `npm test` on pushes and pull requests. The test suite covers API response contracts, directory filtering, session-cookie integrity, and company logo/article-link helper behaviour. A green CI run is required before calling a change verified; check the Actions tab after a push.
 
 The overview's article feed is live and sourced from GDELT DOC 2.0. Article availability depends on external provider coverage and rate limits. City coverage counts are only keyword matches against article titles/domains, not validated city market metrics. The directory is still a reference list of real companies with official links; its city/sector fields are not continuously verified. Salary, office footprint, hiring totals, cost, and growth metrics are intentionally not fabricated and need authoritative data sources before they can be shown as live facts.
 
