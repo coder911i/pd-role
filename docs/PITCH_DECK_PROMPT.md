@@ -1,73 +1,87 @@
-# GCC Intel — Pitch Deck Generation Prompt
+# GCC Intel — Premium PowerPoint Pitch Deck Brief
 
-Copy this prompt into your presentation-generation tool to create a polished pitch deck for GCC Intel.
+**Purpose:** Generate an actual, editable 16:9 PowerPoint (.pptx) with a compelling visual story for GCC Intel. Do not return only an outline or a text-heavy document.
 
----
+## Creative direction — strict
 
-Act as a top-tier B2B SaaS product strategist, startup pitch-deck writer, and presentation designer. Create a compelling, investor/demo-ready PowerPoint presentation for **GCC Intel — Intelligence, in orbit**, a research workspace for India's Global Capability Centre (GCC) ecosystem.
+Create a premium, editorial, Apple-keynote-meets-enterprise-intelligence deck. It must feel art-directed by a strong presentation studio, not like a default AI template.
 
-## Product context
+- **Palette only:** near-black (#07090D), white (#F7F9FC), cool blue (#3978F6 / #6CA6FF), and restrained steel grey. Blue is the only accent. No purple, cyan gradients, orange, green, rainbow colours, or bright multicolour themes.
+- **Typography:** use a distinctive, polished pairing: **SF Pro Display / Inter / Aptos Display** for large headlines and **IBM Plex Mono / SF Mono** for labels, data tags, and source notes. Use a strong scale with large headlines, tight tracking, generous whitespace, and short copy. If SF Pro is unavailable, use Inter or Aptos Display consistently.
+- **Visual language:** cinematic black backgrounds, high-contrast white typography, precise blue lines, subtle grain, fine grids, glassy dark UI surfaces, map contours, signal paths, data nodes, and elegant 3D globe imagery. Use restrained depth and realistic lighting rather than neon effects.
+- **Every slide must have a deliberate composition.** Vary layouts: full-bleed hero, split-screen, editorial statement, timeline, product mockup, process diagram, city comparison, and close. Never repeat the same title-plus-three-cards template across slides.
+- **Visual evidence is mandatory:** include custom diagrams, map-style visuals, product-screen mockups, an ecosystem/network graphic, a city comparison matrix, a phased roadmap, and a clear operating workflow. Use real, relevant images/illustrations where they improve understanding. Do not use generic stock-photo collages, random decorative AI art, fake charts, or illegible tiny UI.
+- **Use screenshots supplied by the user if available.** If no screenshots are available, create tasteful, clearly illustrative mockups based on the actual product modules described below; do not pretend mockups are live product screenshots.
+- Maintain 60% visual / 40% text or better. One core message per slide, usually no more than 25–40 visible words excluding source notes. Keep body text large enough to read on a projector.
 
-GCC Intel is a web-based GCC research and market-intelligence workspace. Its current product experience includes:
-- A command-center style overview with GCC-related news headlines sourced from the GDELT DOC 2.0 feed.
-- A searchable reference directory of companies with city and sector filters and links to official company sources.
-- City intelligence that displays news-mention signals, clearly labelled as article/keyword signals rather than verified market size.
-- A market-signals feed with article headlines, source domains, timestamps when available, and links to the original articles.
-- An AI analyst powered by Groq for asking research questions and generating structured answers.
-- A research library for saving company shortlists and analyst responses, where database configuration is available.
-- A responsive UI with a dark premium interface, purple/cyan accents, and an animated 3D globe.
-- Current technology stack: React, Vite, Three.js, Vercel serverless API routes, Groq Chat Completions, and optional Neon PostgreSQL persistence.
+## Product truth
 
-## Audience and goal
+GCC Intel is an early-stage research workspace for India's Global Capability Centre ecosystem. Its current product experience includes:
+- GCC-related news signals sourced from GDELT DOC 2.0, with links to publisher articles.
+- A searchable reference company directory with city and sector filters and links to official company sources.
+- City exploration and news-mention comparisons; these are media-coverage signals, **not** verified GCC counts, hiring numbers, talent availability, salary data, or office costs.
+- A Groq-powered AI research analyst that can use available current news evidence.
+- A research library for saved company shortlists and AI responses, with optional Neon PostgreSQL persistence.
+- React + Vite frontend, Three.js visual globe, Vercel serverless API routes, Groq API, optional Neon PostgreSQL.
 
-The audience is a mix of potential design partners, enterprise strategy teams, GCC expansion/location-selection teams, corporate real-estate advisors, talent-strategy teams, and early-stage investors evaluating the concept. Position the deck as a credible product pitch and demo narrative—not as a claim that the company already has paying customers or proven market traction.
+Do not claim that GCC Intel has paying customers, proven traction, validated accuracy, proprietary comprehensive datasets, or enterprise contracts unless the user supplies evidence. Mark roadmap ideas as proposed, not shipped.
 
-The deck should explain:
-1. The decision problem GCC teams face when researching Indian cities and the GCC landscape.
-2. Why fragmented news, company pages, spreadsheets, and manual research create friction.
-3. How GCC Intel brings discovery, current news signals, city exploration, AI-assisted analysis, and saved research into one workflow.
-4. A realistic product walkthrough and example use case: comparing Bengaluru and Hyderabad for an AI-focused GCC.
-5. The target users and plausible initial go-to-market strategy.
-6. A practical product roadmap, validation plan, and clear ask for design partners or pilot users.
+## Audience and narrative
 
-## Required slide structure (12 slides)
+Audience: GCC expansion and strategy teams, location advisory, corporate real-estate teams, talent strategy leaders, consulting/research teams, and prospective design partners.
 
-1. **Cover:** GCC Intel — Intelligence, in orbit. One strong positioning line; striking dark globe visual.
-2. **The problem:** GCC location and ecosystem research is fragmented across sources and manual workflows. Use a simple workflow-friction visual, not unsupported statistics.
-3. **Why this matters:** GCC decisions involve talent, cost, ecosystem, infrastructure, policy, and momentum. Show the cost of making decisions from incomplete or stale information without inventing financial impact.
-4. **The solution:** GCC Intel as a research workspace that organizes signals, company discovery, city exploration, and AI-assisted synthesis.
-5. **Product walkthrough:** Overview, directory, city intelligence, market signals, AI analyst, and research library. Use annotated mockups or screenshots if supplied; otherwise create clearly labelled illustrative UI mockups.
-6. **Example use case:** Bengaluru vs Hyderabad for an AI-focused GCC. Compare dimensions and explicitly mark what is known, what is only a news signal, and what still needs primary validation. Do not invent current salary, rent, hiring, talent, or incentive figures.
-7. **How it works:** News ingestion → source-linked evidence → company/city discovery → AI-assisted synthesis → saved research and decision brief. Distinguish implemented features from planned capabilities.
-8. **Target customers and use cases:** GCC strategy and expansion teams, location advisory, corporate real estate, talent strategy, and consulting/research teams. Present these as target segments, not existing customers.
-9. **Differentiation and alternatives:** Compare the workflow conceptually with spreadsheets, general web search, news feeds, and generic AI chat. Avoid claiming competitors lack features unless verified. Emphasize source-linked research, a GCC-specific workflow, and transparent uncertainty.
-10. **Business model and go-to-market hypotheses:** Propose testable options such as team subscriptions, enterprise plans, and paid research pilots. Clearly label pricing and revenue as hypotheses to validate, not established facts.
-11. **Roadmap and trust:** Near-term: stronger source coverage, evidence citations, data freshness labels, exports, saved workspaces, and validation workflows. Later: richer city-level datasets, alerts, collaboration, and enterprise access controls. Label unbuilt items as roadmap ideas. Include data quality, source coverage, privacy, and AI reliability as risks with mitigations.
-12. **The ask / close:** Invite a small number of GCC strategy teams and advisors to become design partners, test a real city-selection workflow, and help prioritize the roadmap. End with a crisp one-sentence vision and a placeholder for contact details—do not invent a person's email, customer logos, funding amount, or traction.
+Narrative arc: **A high-stakes decision starts with fragmented signals → GCC Intel brings those signals into one research workflow → analysts can explore, compare, and build a source-linked brief → the next step is validation with design partners.**
 
-## Evidence and integrity rules
+## Exact 12-slide storyline and visual directions
 
-- Never fabricate customer names, testimonials, usage numbers, revenue, growth, market-size estimates, partnerships, accuracy metrics, or investor interest.
-- Do not describe the reference company directory as a complete or continuously verified census of GCCs.
-- Do not describe city news-mention counts as verified hiring, talent supply, office inventory, market share, or growth.
-- Do not invent current Bengaluru/Hyderabad salaries, rents, talent counts, incentives, or policy claims. If current evidence is required, research credible primary sources and cite them on the slide; otherwise label the item “requires validation”.
-- Clearly distinguish **currently implemented**, **prototype/limited**, and **proposed roadmap** features.
-- Use a source note on every slide containing external factual claims. Prefer official company announcements, government policy documents, credible industry reports, and primary market data.
-- Make assumptions explicit and frame business-model or go-to-market ideas as hypotheses.
-- Use “GCC Intel” consistently. Do not rename the product.
+1. **Cover — “Find the signal. Choose the city.”**
+   Full-bleed matte-black background. A beautiful, high-quality 3D globe or India-focused network map occupies the right two-thirds, with subtle blue nodes and light paths. Left side: GCC Intel wordmark, short positioning line, and a small “GCC intelligence workspace” label. No generic gradients, no random people photos.
 
-## Visual direction
+2. **The decision is bigger than a pin on a map.**
+   Editorial split-screen: left has one forceful headline and a short paragraph; right shows an elegant India map with Bengaluru, Hyderabad, Mumbai, Pune, Chennai and NCR marked as nodes. Use thin blue connections to represent talent, operating cost, ecosystem, infrastructure, and policy dimensions. Do not add unsourced scores.
 
-- 16:9 widescreen, 12 slides, premium enterprise SaaS aesthetic.
-- Dark near-black/navy background with restrained violet and cyan accents, subtle gradients, thin grid lines, and an elegant 3D globe / network motif.
-- Apple-like typography, clean layouts, large readable headlines, minimal copy, crisp charts, and consistent spacing.
-- Each slide should communicate one main idea. Use 3–5 concise bullets maximum per slide; prefer diagrams, workflows, product mockups, and comparison matrices over paragraphs.
-- Avoid generic stock-photo collages, excessive glow, fake dashboards, cluttered gradients, and unreadable tiny text.
-- Add speaker notes with a natural 30–60 second talk track for each slide.
-- Finish with a clear narrative arc: problem → solution → product proof → opportunity → validation plan → ask.
+3. **Research is fragmented.**
+   Show a before/after workflow diagram. “Before”: news tabs, company pages, spreadsheets, analyst notes, disconnected sources. “After”: one evidence-led GCC Intel workflow. Use actual diagram elements and arrows, not a list of generic cards. Avoid invented time-saved percentages.
 
-## Deliverables
+4. **Meet GCC Intel.**
+   A large product hero mockup with dark browser chrome and an elegant dashboard view: live news feed, company directory, city comparison, AI analyst. Add 3–4 callouts pointing to actual capabilities. Label it “illustrative product view” if it is a recreated mockup.
 
-Generate an editable PowerPoint (.pptx) and, if supported, a PDF preview. Include concise speaker notes, source footnotes, and a final slide with editable contact placeholders. Before finalizing, run a factual-integrity pass and list any slide claims that still need verification.
+5. **The product in one workflow.**
+   Wide horizontal process diagram: Discover signals → Explore companies → Compare cities → Ask the analyst → Save the brief. Each stage gets a simple consistent line icon and a small realistic UI thumbnail. Use blue to highlight the active step.
 
-The result should feel like a thoughtful, credible early-stage enterprise SaaS pitch—not a generic AI-generated startup deck.
+6. **A closer look at the intelligence workspace.**
+   A product-tour slide with a large directory/news UI mockup on one side and three concise callouts on the other: source links, city/sector filters, research signals. Do not use fake logos as customer endorsements. Reference companies are examples only, not proof of verified current GCC presence.
+
+7. **Bengaluru vs Hyderabad: a decision framework, not a guess.**
+   Build a high-quality comparison matrix with rows for AI/ML talent, operating cost, infrastructure, ecosystem, momentum, and policy. For each, distinguish “what the current product can signal” from “what requires primary data.” Do not invent scores, salaries, office rents, hiring totals, or incentive values. A tiny footnote must explain that news mentions are media-coverage indicators only.
+
+8. **From signal to decision brief.**
+   Show an AI analyst interface with one realistic question and a structured answer mockup. Pair it with an evidence chain diagram: source article → extracted signal → analyst synthesis → human verification. Clearly state that AI output must be verified and that the tool should not fabricate missing facts.
+
+9. **Who this is for.**
+   Use an elegant stakeholder map or 2×2 use-case grid: GCC strategy, location advisory, talent planning, and consulting/research. Show each user’s job-to-be-done, not generic persona portraits. Label these as target users, not current customers.
+
+10. **A credible position in the toolkit.**
+    Use a clean comparison matrix: spreadsheets, general web search, news feeds, generic AI chat, GCC Intel. Compare workflow focus, source traceability, city/company exploration, and saved research. Avoid unverified claims that competitors cannot do something. Phrase this as a product-positioning hypothesis to test.
+
+11. **Build, validate, expand.**
+    Use a beautiful three-phase roadmap with clear visual progression: **Now** (core workflow and source-linked signals), **Next** (stronger source coverage, exportable briefs, saved workspaces and freshness indicators), **Later** (collaboration, alerts, richer city datasets, enterprise controls). Clearly distinguish shipped features from proposed work. Add a compact trust-and-risk strip: data coverage, stale sources, AI reliability, privacy.
+
+12. **The ask — help shape the decision layer for GCC expansion.**
+    Strong typographic close with a dark globe/map motif. Ask a small number of GCC strategy teams and advisors to become design partners and test a real city-selection workflow. Include editable placeholders for contact name, email, and website; never invent details. End with one memorable sentence.
+
+## Research and citation requirements
+
+- If browsing is available, research current claims using official government sources, company announcements, credible industry reports, and primary market data.
+- Put compact source footnotes on slides containing external facts; include a full source list in speaker notes or an appendix if supported.
+- If current sources are unavailable, mark the relevant point “requires validation” and explain what evidence is needed. Do not write “research says” without a source.
+- Never invent numbers, market size, CAGR, customers, revenue, testimonials, accuracy, partnerships, funding, or product usage.
+- Keep article/news mention counts distinct from verified market metrics.
+
+## Presenter notes and deliverables
+
+- Add natural 30–45 second speaker notes to every slide. Notes should explain the story and transition, not read the slide verbatim.
+- Deliver an editable **.pptx** with editable text, diagrams, matrices, and shapes. If supported, also deliver a PDF preview.
+- Use genuine diagrams built from shapes/lines/connectors rather than inserting every slide as a flat image. Keep all text editable.
+- Before delivery, check slide consistency, alignment, font embedding/substitution, contrast, overflow, citations, and readability at presentation size.
+- Final pass: remove any generic AI phrasing, repeated layouts, decorative but meaningless graphics, fake data, and unsupported claims. The result must be sharp, visually distinctive, black/white/blue, and presentation-ready.
