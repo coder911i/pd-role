@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     }
     const id = typeof req.body?.id === 'string' ? req.body.id.trim() : ''
     if (req.method === 'DELETE') {
-      if (!id || id.length > 80) return res.status(400).json({ error: 'A valid report id is required.' })
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) return res.status(400).json({ error: 'A valid report id is required.' })
       const rows = await sql`DELETE FROM research_reports WHERE id = ${id}::uuid AND session_id = ${sessionId} RETURNING id`
       return res.status(200).json({ ok: true, removed: rows.length > 0 })
     }
