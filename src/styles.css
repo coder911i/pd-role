@@ -195,3 +195,7 @@ html,body,#root,.app-shell,.main{max-width:100%;overflow-x:clip}
 @media(max-width:900px){.landscape-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.city-unit-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){.landscape-section{padding-top:31px}.landscape-metrics{gap:9px}.landscape-metric{padding:15px 13px;border-radius:12px}.landscape-value{font-size:27px;margin:15px 0 8px}.landscape-metric strong{font-size:10px}.landscape-detail{font-size:8px}.source-stamp{font-size:7px;padding:7px}.landscape-source-row{gap:9px;font-size:8px}.source-date{margin-left:0;width:100%}.city-unit-block{padding:13px}.city-unit-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.city-unit-card{padding:12px}.city-unit-name{font-size:11px}.city-unit-card strong{font-size:25px}.city-unit-heading h3{font-size:15px}.method-note{font-size:8px}}
 @media(prefers-reduced-motion:reduce){.brand-loader,.loader-mark i,.loader-track span,.landscape-metric{animation:none!important}.city-unit-card{transition:none!important}}
+
+.live-match{display:inline-flex;align-items:center;gap:5px;padding:5px 7px;border:1px solid #7ce2bd2a;border-radius:6px;background:#7ce2bd0b;color:#8de4c2;font:8px 'DM Mono',monospace;letter-spacing:.3px}
+.company-evidence-link{display:inline-flex;align-items:center;gap:5px;color:#a89cff;font-size:9px}
+.company-evidence-link:hover{color:#d8d2ff}
