@@ -202,7 +202,7 @@ function App() {
     (city === 'All cities' || c.city === city)
   ), [query, sector, city])
 
-  const ask = (text = question) => {
+  const ask = async (text = question) => {
     const q = text.trim()
     if (!q) return
     let answer = 'Based on the illustrative sample dataset, start with Bengaluru and Hyderabad for a broad technology-led GCC search, then validate role mix, hiring activity, compensation, and office footprint against current primary sources before making a decision.'
