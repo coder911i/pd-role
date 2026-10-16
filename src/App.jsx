@@ -181,7 +181,7 @@ function App() {
   const [city, setCity] = useState('All cities')
   const [selectedCity, setSelectedCity] = useState('Bengaluru')
   const [saved, setSaved] = useState(() => { try { return JSON.parse(localStorage.getItem('gcc-intel-saved') || '[]') } catch { return [] } })
-  const [reports, setReports] = useState([])
+  const [reports, setReports] = useState(() => { try { return JSON.parse(localStorage.getItem('gcc-intel-reports') || '[]') } catch { return [] } })
   const [reportStatus, setReportStatus] = useState('Loading saved research…')
   const [mobileNav, setMobileNav] = useState(false)
   const [question, setQuestion] = useState('')
@@ -195,11 +195,15 @@ function App() {
   }, [saved])
 
   useEffect(() => {
+    try { localStorage.setItem('gcc-intel-reports', JSON.stringify(reports)) } catch { /* storage may be unavailable */ }
+  }, [reports])
+
+  useEffect(() => {
     let cancelled = false
     fetch('/api/session', { credentials: 'same-origin' })
       .then(response => response.ok ? fetch('/api/saved', { credentials: 'same-origin' }) : Promise.reject(new Error('Session unavailable')))
       .then(response => response.ok ? response.json() : Promise.reject(new Error('Saved list unavailable')))
-      .then(payload => { if (!cancelled && Array.isArray(payload.data)) setSaved(payload.data.map(item => item.name)) })
+      .then(payload => { if (!cancelled && Array.isArray(payload.data)) setSaved(prev => [...new Set([...prev, ...payload.data.map(item => item.name)])]) })
       .catch(() => { /* Local saved list remains available without database configuration. */ })
     fetch('/api/session', { credentials: 'same-origin' })
       .then(response => response.ok ? fetch('/api/reports', { credentials: 'same-origin' }) : Promise.reject(new Error('Session unavailable')))
