@@ -446,3 +446,13 @@ button, a { opacity:1; }
   opacity: 1 !important;
   -webkit-text-fill-color: #c9cce0 !important;
 }
+
+
+/* Real company favicons and clickable company/article links */
+.company-logo { position:relative; overflow:hidden; background:#f7f8fb !important; border:1px solid #dfe3eb !important; }
+.company-logo img { position:absolute; inset:4px; width:calc(100% - 8px); height:calc(100% - 8px); object-fit:contain; border-radius:3px; }
+.company-logo-fallback { position:absolute; inset:0; display:grid; place-items:center; color:#5368ff; font-size:9px; font-weight:800; }
+.company-brand-link { display:inline-flex; flex-shrink:0; border-radius:8px; }
+.company-brand-link:focus-visible,.company-name-link:focus-visible { outline:2px solid #b7a5ff; outline-offset:3px; }
+.company-name-link { color:#f1f3f7; text-decoration:none; font-size:10px; font-weight:650; }
+.company-name-link:hover { color:#b7a5ff; text-decoration:underline; text-underline-offset:3px; }
