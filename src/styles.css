@@ -201,3 +201,50 @@ html,body,#root,.app-shell,.main{max-width:100%;overflow-x:clip}
 .company-evidence-link:hover{color:#d8d2ff}
 
 .capability-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.capability-stat{display:flex;align-items:center;gap:13px;padding:14px 16px;border:1px solid #ffffff0e;border-radius:11px;background:#a89cff08}.capability-rail{display:grid;place-items:center;min-width:28px;border-right:1px solid #a89cff25;padding-right:12px;color:#7f819e;font:8px 'DM Mono',monospace}.capability-stat strong,.capability-stat span{display:block}.capability-stat strong{font-size:19px;letter-spacing:-.6px;color:#e9e7ff;font-weight:650}.capability-stat div>span{margin-top:4px;font-size:9px;color:#898ba5;line-height:1.4}@media(max-width:600px){.capability-strip{grid-template-columns:1fr;gap:7px}.capability-stat{padding:11px 13px}.capability-stat strong{font-size:17px}.capability-stat div>span{font-size:9px}}
+
+
+/* Accessible text contrast: keep accent colours readable against their actual surfaces. */
+:root{
+  --muted:#b8bad0;
+  --muted-2:#9da0bb;
+  --line:rgba(190,192,230,.2);
+  --purple:#c0b8ff;
+  --cyan:#8fe7ff;
+  --green:#8decc9;
+  --orange:#ffd09a;
+  color-scheme:dark;
+}
+.brand-sub,.nav-label,.nav-count,.plan-card span,.profile-info span,
+.breadcrumbs,.crumb-slash,.eyebrow,.hero-bottom-line,.metric-label,
+.metric-index,.metric-foot,.chart-foot,.source-date,.source-stamp,
+.method-note,.city-disclaimer,.chat-footnote,.footer-right,.table-footer,
+.landscape-source-row,.globe-caption,.connect-note,.demo-label,
+.demo-notice,.empty-state,.live-empty-state,.signal-tag,.size-chip,
+.sector-chip,.tag-east,.tag-north,.tag-south,.tag-pulse{
+  color:#b7b9d1;
+}
+.nav-item{color:#c0c2d8}
+.nav-item:hover{color:#f4f3ff;background:#ffffff0b}
+.nav-item.active{color:#f3f0ff}
+.nav-label{color:#aeb0ca}
+.breadcrumbs strong,.workspace strong,.profile-info strong,.plan-card strong{color:#f4f4fb}
+.workspace span,.profile-info span,.plan-card span{color:#b8bad0}
+.hero-description,.section-subtitle,.panel-kicker,.city-detail-score,
+.metric-delta,.landscape-detail,.company-evidence-link,.chat-footnote,
+.source-date,.method-note,.city-disclaimer,.signal-text p{
+  color:#b8bad0;
+}
+.muted{color:#a5a7c2}
+.nav-count{color:#b8bad0}
+.eyebrow-pill,.nav-new,.plan-icon,.footer-purple,.purple{color:#d0c9ff}
+.blue,.cyan,.company-evidence-link{color:#91eaff}
+.green,.status-dot,.ai-status span,.footer-status{color:#91efce}
+.orange{color:#ffd09a}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:2px solid #bcb2ff;
+  outline-offset:3px;
+}
+::selection{background:#5545a8;color:#fff}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
