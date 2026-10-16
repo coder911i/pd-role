@@ -383,3 +383,40 @@ table tbody tr:hover { background:#191821 !important; }
 .live-match { color:#9bf0ce !important; }
 button, a { opacity:1; }
 
+/* Final contrast fix: selected city row must stay dark, never pale lavender */
+.compare-card { background:#09090b !important; color:#f7f7fa !important; }
+.compare-card .compare-head { color:#bfc4d1 !important; }
+.compare-card .compare-row,
+.compare-card .compare-row:visited {
+  background:#0c0c0f !important;
+  color:#f3f4f8 !important;
+  border:1px solid #292a33 !important;
+  opacity:1 !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+.compare-card .compare-row > span { color:#f0f1f5 !important; opacity:1 !important; }
+.compare-card .compare-row .compare-city { color:#fff !important; }
+.compare-card .compare-row .momentum { color:#8be8c2 !important; }
+.compare-card .compare-row > span:nth-child(3) { color:#c5c8d2 !important; }
+.compare-card .compare-row:hover {
+  background:#17151f !important;
+  border-color:#6256a5 !important;
+}
+.compare-card .compare-row.chosen,
+.compare-card .compare-row.chosen:hover {
+  background:linear-gradient(90deg,#1c1a2b,#12121a) !important;
+  border-color:#8f82ff !important;
+  box-shadow:inset 4px 0 #8f82ff !important;
+  color:#fff !important;
+}
+.compare-card .compare-row.chosen > span,
+.compare-card .compare-row.chosen > span:nth-child(3),
+.compare-card .compare-row.chosen .compare-city,
+.compare-card .compare-row.chosen .momentum {
+  color:#fff !important;
+  opacity:1 !important;
+  -webkit-text-fill-color:#fff !important;
+}
+.compare-card .compare-row.chosen .momentum { color:#8be8c2 !important; -webkit-text-fill-color:#8be8c2 !important; }
+.compare-card .demo-label { background:#14151b !important; color:#c9cce0 !important; border-color:#353743 !important; }
+
