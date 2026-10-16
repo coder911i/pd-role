@@ -2,7 +2,9 @@ const GDELT_URL = 'https://api.gdeltproject.org/api/v2/doc/doc'
 
 const SEARCHES = [
   '("global capability center" OR "global capability centre" OR "India GCC" OR "GCC India" OR "global in-house center" OR "global in-house centre")',
-  '("global capability centre" OR "global capability center") India'
+  '("global capability centre" OR "global capability center") India',
+  '("GCC" OR "global capability centre" OR "global capability center") (launch OR launches OR expansion OR investment OR hiring) India',
+  '("new GCC" OR "GCC setup" OR "capability centre") India 2026'
 ]
 
 function decodeXml(value = '') {
@@ -81,7 +83,9 @@ export default async function handler(req, res) {
     .then(items => [...new Map(items.map(item => [item.url, item])).values()])
   const rssJobs = Promise.all([
     fetchGoogleNewsRss('"global capability center" India'),
-    fetchGoogleNewsRss('"global capability centre" India GCC')
+    fetchGoogleNewsRss('"global capability centre" India GCC'),
+    fetchGoogleNewsRss('new GCC India company expansion 2026'),
+    fetchGoogleNewsRss('global capability centre India hiring investment 2026')
   ]).then(groups => groups.flat())
     .then(items => [...new Map(items.map(item => [item.url, item])).values()])
 
@@ -97,12 +101,13 @@ export default async function handler(req, res) {
       })
     ])
     return res.status(200).json({
-      data: data.data.slice(0, 30),
+      data: data.data.slice(0, 60),
       total: data.data.length,
       meta: {
         provider: data.provider,
         live: true,
         timespan: '7d',
+        recordsReturned: Math.min(data.data.length, 60),
         fetchedAt: new Date().toISOString(),
         note: 'Live public-news coverage, not a verified census of GCCs, hiring totals, or company footprint data.'
       }
