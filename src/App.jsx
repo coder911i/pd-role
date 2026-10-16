@@ -174,7 +174,7 @@ function MetricCard({ label, value, delta, icon: Icon, foot, bars, color = 'viol
 }
 
 function App() {
-  const [companyData, setCompanyData] = useState([])
+  const [companyData, setCompanyData] = useState(companies)
   const [liveSignals, setLiveSignals] = useState([])
   const [signalsStatus, setSignalsStatus] = useState('Loading live news…')
   const [signalsUpdatedAt, setSignalsUpdatedAt] = useState(null)
@@ -217,8 +217,11 @@ function App() {
       .catch(() => { if (!cancelled) setReportStatus('Local session · add DATABASE_URL to enable cloud persistence') })
     fetch('/api/directory')
       .then(response => response.ok ? response.json() : Promise.reject(new Error('Directory API unavailable')))
-      .then(payload => { if (!cancelled && Array.isArray(payload.data)) setCompanyData(payload.data) })
-      .catch(() => { if (!cancelled) setCompanyData([]) })
+      .then(payload => {
+        if (!cancelled && Array.isArray(payload.data) && payload.data.length) setCompanyData(payload.data)
+        // Keep the curated, source-linked reference directory visible if the API is temporarily unavailable.
+      })
+      .catch(() => { /* The built-in source-linked directory remains available. */ })
     const loadLiveSignals = () => fetch('/api/signals')
       .then(response => response.ok ? response.json() : Promise.reject(new Error('Live news unavailable')))
       .then(payload => {
