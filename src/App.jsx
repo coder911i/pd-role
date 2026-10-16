@@ -202,8 +202,20 @@ function App() {
     else if (lower.includes('ai') || lower.includes('technology') || lower.includes('tech')) answer = 'For AI and technology capability, start with Bengaluru and Hyderabad, then compare Pune and Chennai by talent availability and role fit. Sample company signals include product engineering, AI research, cloud platforms, and enterprise technology. Treat these as research prompts rather than verified live hiring signals.'
     else if (lower.includes('company') || lower.includes('competitor') || lower.includes('directory')) answer = 'The prototype directory contains ' + companies.length + ' sample company records across ' + [...new Set(companies.map(c => c.sector))].length + ' sectors. Use the directory filters to narrow by sector and city; each record links to an official company newsroom or site for follow-up verification.'
     else if (lower.includes('hyderabad') || lower.includes('bengaluru') || lower.includes('bangalore')) answer = 'Bengaluru’s illustrative talent score is 96 and Hyderabad’s is 91; Hyderabad’s momentum marker is +22% versus Bengaluru’s +18% in this demo. These are mock values to demonstrate the comparison workflow, not sourced market statistics.'
-    setMessages(prev => [...prev, { role: 'user', text: q }, { role: 'assistant', text: answer }])
+    setMessages(prev => [...prev, { role: 'user', text: q }, { role: 'assistant', text: 'Thinking…' }])
     setQuestion('')
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: q })
+      })
+      const data = await response.json()
+      if (!response.ok || !data.answer) throw new Error(data.error || 'AI endpoint is not configured')
+      setMessages(prev => prev.map((m, i) => i === prev.length - 1 && m.text === 'Thinking…' ? { ...m, text: data.answer } : m))
+    } catch {
+      setMessages(prev => prev.map((m, i) => i === prev.length - 1 && m.text === 'Thinking…' ? { ...m, text: answer + ' (Local demo response — configure GROQ_API_KEY on the server to enable live answers.)' } : m))
+    }
   }
 
   const toggleSaved = name => setSaved(prev => prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name])
@@ -272,7 +284,7 @@ function App() {
       </section>
 
       <section className="content-section analyst-section" id="analyst">
-        <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> RESEARCH COPILOT</div><h2>Ask better questions.</h2><p className="section-subtitle">A conversational interface ready to connect to your Groq API.</p></div><div className="ai-status"><span/> MODEL CONNECTION: NOT CONFIGURED</div></div>
+        <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> RESEARCH COPILOT</div><h2>Ask better questions.</h2><p className="section-subtitle">A conversational interface ready to connect to your Groq API.</p></div><div className="ai-status"><span/> GROQ-READY / SERVER KEY REQUIRED</div></div>
         <div className="analyst-layout"><div className="analyst-intro"><div className="ai-orb"><div className="ai-orb-inner"><Sparkles size={28}/></div><span className="orb-ring ring-a"/><span className="orb-ring ring-b"/></div><h3>Research, without<br/><span>the blank page.</span></h3><p>Use prompts to shape a city shortlist, identify sector clusters, or turn an emerging signal into a structured research brief.</p><div className="capability-list"><span><Check size={14}/> City comparisons</span><span><Check size={14}/> Company discovery</span><span><Check size={14}/> Research brief drafts</span></div><div className="connect-note"><Database size={15}/><span>Demo responses are local. Add your Groq endpoint on the server before enabling live AI.</span></div></div>
           <div className="panel chat-panel"><div className="chat-header"><div className="chat-avatar"><Sparkles size={16}/></div><div><strong>GCC Research Analyst</strong><span><i/> Prototype assistant · Sample data</span></div><button className="icon-button" onClick={() => setMessages([{role:'assistant',text:'Hi. I’m your GCC research copilot. Ask me to compare cities, map competitors, or build a shortlist. I’ll keep this prototype’s sample data clearly labelled.'}])} title="Reset chat"><Activity size={16}/></button></div><div className="chat-messages">{messages.map((m,i) => <div className={'chat-message ' + m.role} key={i}>{m.role === 'assistant' && <div className="message-avatar"><Sparkles size={13}/></div>}<div className="message-bubble">{m.text}</div></div>)}</div><div className="prompt-chips"><button onClick={() => ask('Compare Bengaluru and Hyderabad for an AI GCC')}>Compare tech hubs <ArrowUpRight size={12}/></button><button onClick={() => ask('Which cities are more affordable?')}>Explore cost signals <ArrowUpRight size={12}/></button><button onClick={() => ask('Build a BFSI company shortlist')}>Find BFSI companies <ArrowUpRight size={12}/></button></div><form className="chat-input-row" onSubmit={e => {e.preventDefault(); ask()}}><input value={question} onChange={e => setQuestion(e.target.value)} placeholder="Ask about cities, companies or sector signals…"/><button type="submit" disabled={!question.trim()} aria-label="Send message"><Send size={16}/></button></form><div className="chat-footnote">Prototype assistant · Not connected to Groq · Validate outputs before decisions</div></div></div>
       </section>
