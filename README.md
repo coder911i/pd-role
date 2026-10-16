@@ -49,7 +49,8 @@ Configure these environment variables in **Vercel → Project → Settings → E
 |---|---|---|
 | `GROQ_API_KEY` | For live AI | Groq API key, server-side only |
 | `GROQ_MODEL` | Optional | Defaults to `llama-3.3-70b-versatile` |
-| `DATABASE_URL` | For cloud persistence | Neon PostgreSQL connection string |
+| `DATABASE_URL_POOLED` | Recommended for Vercel | Neon pooled PostgreSQL connection string |
+| `DATABASE_URL` | Optional fallback | Neon direct PostgreSQL connection string |
 | `SESSION_SECRET` | For saved-data sessions | Long random secret used to sign the HTTP-only session cookie |
 
 After adding variables, redeploy. Never create a `VITE_GROQ_API_KEY` variable; Vite-exposed values are public.
@@ -67,7 +68,7 @@ After adding variables, redeploy. Never create a `VITE_GROQ_API_KEY` variable; V
 - `POST /api/reports` — body: `{ "title": "...", "prompt": "...", "body": "...", "model": "..." }`.
 - `DELETE /api/reports` — body: `{ "id": "report-uuid" }`.
 
-The saved-company and report endpoints require `DATABASE_URL`; their tables are created lazily. The SQL schema is also available at `api/schema.sql`. The anonymous signed cookie is session separation, **not account authentication**. Add a real identity provider before storing sensitive or tenant-specific data. Configure `SESSION_SECRET` in production.
+The saved-company and report endpoints require `DATABASE_URL_POOLED` or `DATABASE_URL`; the pooled URL is preferred for serverless deployments. Their tables are created lazily. The SQL schema is also available at `api/schema.sql`. The anonymous signed cookie is session separation, **not account authentication**. Add a real identity provider before storing sensitive or tenant-specific data. Configure `SESSION_SECRET` in production.
 
 ## Quality and data integrity
 
