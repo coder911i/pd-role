@@ -450,7 +450,7 @@ button, a { opacity:1; }
 
 /* Real company favicons and clickable company/article links */
 .company-logo { position:relative; overflow:hidden; background:#f7f8fb !important; border:1px solid #dfe3eb !important; }
-.company-logo img { position:absolute; inset:4px; width:calc(100% - 8px); height:calc(100% - 8px); object-fit:contain; border-radius:3px; }
+.company-logo img { position:absolute; inset:4px; width:calc(100% - 8px); height:calc(100% - 8px); object-fit:contain; border-radius:3px; background:#fff; padding:2px; z-index:2; }
 .company-logo-fallback { position:absolute; inset:0; display:grid; place-items:center; color:#5368ff; font-size:9px; font-weight:800; }
 .company-brand-link { display:inline-flex; flex-shrink:0; border-radius:8px; }
 .company-brand-link:focus-visible,.company-name-link:focus-visible { outline:2px solid #b7a5ff; outline-offset:3px; }
