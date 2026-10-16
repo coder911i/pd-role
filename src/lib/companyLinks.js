@@ -23,7 +23,7 @@ export function getCompanyDomain(company) {
 
 export function getCompanyLogoUrl(company) {
   const domain = getCompanyDomain(company)
-  return `https://cdn.simpleicons.org/${({ 'Microsoft':'microsoft','Google':'google','Amazon':'amazon','JPMorgan Chase':'jpmorgan','Walmart Global Tech':'walmart','Goldman Sachs':'goldmansachs','Bosch':'bosch','Siemens':'siemens','Adobe':'adobe','American Express':'americanexpress','Target':'target','Ericsson':'ericsson','NVIDIA':'nvidia','Wells Fargo':'wellsfargo','Airbus':'airbus','Uber':'uber' })[company.name] || 'google'}`
+  return `https://cdn.simpleicons.org/${({ 'Microsoft':'microsoft','Google':'google','Amazon':'amazon','JPMorgan Chase':'jpmorgan','Walmart Global Tech':'walmart','Goldman Sachs':'goldmansachs','Bosch':'bosch','Siemens':'siemens','Adobe':'adobe','American Express':'americanexpress','Target':'target','Ericsson':'ericsson','NVIDIA':'nvidia','Wells Fargo':'wellsfargo','Airbus':'airbus','Uber':'uber' })[company.name] || domain.split('.')[0].replace(/[^a-z0-9]/gi, '')}`
 }
 
 export function getCompanyArticleUrl(company, liveSignals = []) {
