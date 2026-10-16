@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { getCompanyArticleUrl, getCompanyDomain, getCompanyLogoUrl } from '../src/lib/companyLinks.js'
+import { getCompanyArticleUrl, getCompanyDomain, getCompanyLogoUrl, getPublisherDomain, getPublisherLogoUrl } from '../src/lib/companyLinks.js'
 
 const microsoft = {
   name: 'Microsoft',
@@ -31,4 +31,13 @@ test('company without a matching article safely falls back to its official sourc
 test('company article matching is case-insensitive and handles multi-word names', () => {
   const company = { name: 'JPMorgan Chase', source: 'https://www.jpmorganchase.com/newsroom' }
   assert.equal(getCompanyArticleUrl(company, [{ title: 'JPMORGAN CHASE announces results', url: 'https://publisher.example/jpm' }]), 'https://publisher.example/jpm')
+})
+
+test('known publishers resolve to their own brand domain', () => {
+  assert.equal(getPublisherDomain({ domain: 'ANI News', url: 'https://news.google.com/rss/articles/example' }), 'aninews.in')
+  assert.equal(getPublisherLogoUrl({ domain: 'ANI News', url: 'https://news.google.com/rss/articles/example' }), 'https://www.google.com/s2/favicons?domain=aninews.in&sz=128')
+})
+
+test('publisher domains that are already hostnames are normalized', () => {
+  assert.equal(getPublisherDomain({ domain: 'www.hrtoday.in', url: 'https://news.google.com/rss/articles/example' }), 'hrtoday.in')
 })
