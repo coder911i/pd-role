@@ -2,8 +2,11 @@ import { neon } from '@neondatabase/serverless'
 
 let sqlClient
 export function getSql() {
-  if (!process.env.DATABASE_URL) return null
-  if (!sqlClient) sqlClient = neon(process.env.DATABASE_URL)
+  // Prefer the pooled Neon URL for serverless deployments. DATABASE_URL remains
+  // a fallback for local development or deployments without a separate pooler URL.
+  const connectionString = process.env.DATABASE_URL_POOLED || process.env.DATABASE_URL
+  if (!connectionString) return null
+  if (!sqlClient) sqlClient = neon(connectionString)
   return sqlClient
 }
 
