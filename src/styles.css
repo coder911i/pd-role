@@ -331,3 +331,55 @@ button, input, select, textarea { accent-color: #b7a5ff; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
 
+/* Fix washed-out text and light surfaces across the entire dashboard */
+body, #root { background-color:#050505; color:#f7f7fa; }
+.panel, .workspace, .metric-card, .chat-panel, .analyst-intro,
+.city-detail-card, .compare-card, .directory-panel, .signal-panel,
+.live-news-panel, .table-wrap {
+  color:#f5f5f7;
+}
+.chat-header { background:#09090b !important; color:#fff !important; border-color:#24242b !important; }
+.chat-header h2, .chat-header h3, .chat-header strong,
+.chat-header .chat-title, .chat-messages, .message-bubble,
+.analyst-intro h2, .analyst-intro h3, .analyst-intro p,
+.signal-panel .panel-heading h3, .live-news-panel .panel-heading h3 {
+  color:#f7f7fa !important;
+  opacity:1 !important;
+  -webkit-text-fill-color:currentColor;
+}
+.chat-messages { background:#080809 !important; }
+.message-bubble {
+  background:#151519 !important;
+  border:1px solid #2b2b34 !important;
+  color:#f7f7fa !important;
+}
+.message-bubble p, .message-bubble span, .message-bubble div {
+  color:inherit;
+  opacity:1;
+}
+.chat-message.user .message-bubble,
+.user-message .message-bubble {
+  background:#222039 !important;
+  color:#fff !important;
+  border-color:#514a80 !important;
+}
+.chat-input-row { background:#0b0b0d !important; border-color:#34343d !important; }
+.chat-input-row input { background:transparent !important; color:#fff !important; opacity:1 !important; }
+.chat-input-row input::placeholder { color:#a8a8b5 !important; opacity:1 !important; }
+.chat-footnote { color:#b8b8c5 !important; opacity:1 !important; }
+.panel-heading, .panel-heading * { opacity:1; }
+.panel-heading h3, .panel-heading strong { color:#f8fafc !important; }
+.panel-heading p, .panel-heading span, .panel-kicker { color:#bfc1ce !important; }
+.signal-item { background:#0b0b0d !important; color:#f7f7fa !important; }
+.signal-text strong, .signal-text p, .signal-tag { opacity:1 !important; }
+.signal-text strong { color:#f7f7fa !important; }
+.signal-text p { color:#c5c6d0 !important; }
+table thead, th { background:#101013 !important; color:#d7d8e1 !important; }
+table tbody tr { background:#09090b !important; }
+table tbody tr:nth-child(even) { background:#0d0d10 !important; }
+table td { color:#ececf2 !important; opacity:1 !important; }
+table td strong, table td b { color:#fff !important; }
+table tbody tr:hover { background:#191821 !important; }
+.live-match { color:#9bf0ce !important; }
+button, a { opacity:1; }
+
