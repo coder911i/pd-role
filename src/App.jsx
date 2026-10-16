@@ -179,7 +179,7 @@ function App() {
   const [sector, setSector] = useState('All sectors')
   const [city, setCity] = useState('All cities')
   const [selectedCity, setSelectedCity] = useState('Bengaluru')
-  const [saved, setSaved] = useState([])
+  const [saved, setSaved] = useState(() => { try { return JSON.parse(localStorage.getItem('gcc-intel-saved') || '[]') } catch { return [] } })
   const [mobileNav, setMobileNav] = useState(false)
   const [question, setQuestion] = useState('')
   const [messages, setMessages] = useState([
@@ -188,7 +188,16 @@ function App() {
   const [timeframe, setTimeframe] = useState('12 months')
 
   useEffect(() => {
+    try { localStorage.setItem('gcc-intel-saved', JSON.stringify(saved)) } catch { /* storage may be unavailable */ }
+  }, [saved])
+
+  useEffect(() => {
     let cancelled = false
+    fetch('/api/session', { credentials: 'same-origin' })
+      .then(response => response.ok ? fetch('/api/saved', { credentials: 'same-origin' }) : Promise.reject(new Error('Session unavailable')))
+      .then(response => response.ok ? response.json() : Promise.reject(new Error('Saved list unavailable')))
+      .then(payload => { if (!cancelled && Array.isArray(payload.data)) setSaved(payload.data.map(item => item.name)) })
+      .catch(() => { /* Local saved list remains available without database configuration. */ })
     fetch('/api/directory')
       .then(response => response.ok ? response.json() : Promise.reject(new Error('Directory API unavailable')))
       .then(payload => { if (!cancelled && Array.isArray(payload.data)) setCompanyData(payload.data) })
@@ -228,7 +237,20 @@ function App() {
     }
   }
 
-  const toggleSaved = name => setSaved(prev => prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name])
+  const toggleSaved = name => {
+    const company = companyData.find(item => item.name === name) || companies.find(item => item.name === name)
+    const wasSaved = saved.includes(name)
+    setSaved(prev => wasSaved ? prev.filter(n => n !== name) : [...prev, name])
+    if (!company) return
+    fetch('/api/session', { credentials: 'same-origin' })
+      .then(response => response.ok ? fetch('/api/saved', {
+        method: wasSaved ? 'DELETE' : 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: String(company.id || company.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')), name: company.name, city: company.city, sector: company.sector })
+      }) : Promise.reject(new Error('Session unavailable')))
+      .catch(() => { /* Local saved list is the offline fallback. */ })
+  }
   const jump = id => { setActive(id); setMobileNav(false); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }) }
   const sectorOptions = ['All sectors', ...new Set(companies.map(c => c.sector))]
   const cityOptions = ['All cities', ...new Set(companies.map(c => c.city))]
