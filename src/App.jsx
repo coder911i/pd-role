@@ -192,7 +192,7 @@ function App() {
   const [messages, setMessages] = useState([
     { role: 'assistant', text: 'Hi. I’m your GCC research copilot. I can answer from current news coverage when the live feed is available. I will not invent city scores, hiring numbers, or market metrics.' }
   ])
-  const [timeframe, setTimeframe] = useState('12 months')
+  const [timeframe, setTimeframe] = useState('7 days')
 
   useEffect(() => {
     try { localStorage.setItem('gcc-intel-saved', JSON.stringify(saved)) } catch { /* storage may be unavailable */ }
@@ -320,22 +320,22 @@ function App() {
     </aside>
 
     <main className="main">
-      <header className="topbar"><button className="mobile-menu icon-button" onClick={() => setMobileNav(true)}><Menu size={19}/></button><div className="breadcrumbs"><span>Workspace</span><span className="crumb-slash">/</span><strong>{navItems.find(n => n.id === active)?.label || 'Overview'}</strong></div><div className="top-actions"><div className="live-pill"><span/> DATA DEMO</div><button className="icon-button notification" aria-label="Notifications"><Bell size={17}/><i/></button><div className="top-avatar">TS</div></div></header>
+      <header className="topbar"><button className="mobile-menu icon-button" onClick={() => setMobileNav(true)}><Menu size={19}/></button><div className="breadcrumbs"><span>Workspace</span><span className="crumb-slash">/</span><strong>{navItems.find(n => n.id === active)?.label || 'Overview'}</strong></div><div className="top-actions"><div className="live-pill"><span/> {signalsStatus}</div><button className="icon-button notification" aria-label="Notifications"><Bell size={17}/><i/></button><div className="top-avatar">TS</div></div></header>
 
       <section className="hero" id="overview">
         <div className="hero-copy">
           <div className="eyebrow"><span className="eyebrow-line"/> GCC INTELLIGENCE / INDIA <span className="eyebrow-pill">BETA 01</span></div>
           <h1>See the future<br/>of <span>global capability.</span></h1>
-          <p className="hero-description">A sharper view of India’s GCC landscape. Discover talent hubs, map company footprints, and turn fragmented market signals into your next strategic move.</p>
+          <p className="hero-description">A live view of GCC-related news in India. Explore current coverage, open original sources, and use the research copilot to investigate what is being reported.</p>
           <div className="hero-buttons"><button className="primary-button" onClick={() => jump('directory')}>Explore the ecosystem <ArrowRight size={16}/></button><button className="secondary-button" onClick={() => jump('analyst')}><Sparkles size={15}/> Ask the AI analyst</button></div>
           <div className="hero-proof"><div className="proof-avatars"><span>G</span><span>M</span><span>A</span><span>+</span></div><div><strong>One view. Better decisions.</strong><span>Company intelligence · City insights · Research copilot</span></div></div>
         </div>
-        <div className="hero-visual"><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="globe-glow"/><GlobeScene/><div className="float-tag tag-north"><span className="tag-pulse"/> INDIA / 06 HUBS</div><div className="float-tag tag-east"><MapPin size={13}/> HYDERABAD <b>+22%</b></div><div className="float-tag tag-south"><MapPin size={13}/> BENGALURU <b>CORE</b></div><div className="globe-caption"><span>GLOBAL NETWORK</span><span>17°23′N · 78°29′E</span></div></div>
+        <div className="hero-visual"><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="globe-glow"/><GlobeScene/><div className="float-tag tag-north"><span className="tag-pulse"/> INDIA / LIVE SIGNALS</div><div className="float-tag tag-east"><MapPin size={13}/> HYDERABAD <b>NEWS</b></div><div className="float-tag tag-south"><MapPin size={13}/> BENGALURU <b>HUB</b></div><div className="globe-caption"><span>GLOBAL NETWORK</span><span>17°23′N · 78°29′E</span></div></div>
         <div className="hero-bottom-line"><span>INTELLIGENCE THAT MOVES WITH YOU</span><span>SCROLL TO EXPLORE <ArrowDownRight size={14}/></span></div>
       </section>
 
       <section className="content-section" id="signals">
-        <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> THE LANDSCAPE</div><h2>India, in focus.</h2><p className="section-subtitle">A live-feeling command centre for your GCC research workflow.</p></div><div className="select-wrap"><span>HORIZON</span><select value={timeframe} onChange={e => setTimeframe(e.target.value)}><option>12 months</option><option>6 months</option><option>24 months</option></select><ChevronDown size={13}/></div></div>
+        <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> THE LANDSCAPE</div><h2>India, in focus.</h2><p className="section-subtitle">Live news coverage from the past seven days, with links to original publishers.</p></div><div className="select-wrap"><span>LIVE WINDOW</span><select value={timeframe} onChange={e => setTimeframe(e.target.value)}><option>7 days</option></select><ChevronDown size={13}/></div></div>
         <div className="demo-notice"><span><Activity size={14}/></span><div><strong>{signalsStatus}</strong><p>Live article headlines are fetched from GDELT. These are news mentions, not verified GCC counts, hiring numbers, or financial benchmarks.</p></div><span className="notice-mark">{liveSignals.length ? 'LIVE' : 'NO DATA'}</span></div>
         <div className="panel signal-panel live-news-panel">
           <div className="panel-heading"><div><span className="panel-kicker">LIVE NEWS MONITOR</span><h3>Latest GCC intelligence signals.</h3></div><span className="demo-label">{liveSignals.length} ARTICLES</span></div>
@@ -387,7 +387,7 @@ function App() {
         <p className="section-subtitle" style={{marginTop:14}}>Cloud persistence requires a Neon PostgreSQL DATABASE_URL. Without it, saved items use local/session fallback.</p>
       </section>
 
-      <footer className="footer"><div className="footer-brand"><div className="brand-mark small"><span/><span/><span/></div><span>gcc<span className="footer-purple">intel</span></span></div><span>BUILT FOR THE NEXT WAVE OF GLOBAL CAPABILITY.</span><div className="footer-right"><span><span className="footer-status"/> SYSTEM ONLINE</span><span>v0.1.0 · DEMO</span></div></footer>
+      <footer className="footer"><div className="footer-brand"><div className="brand-mark small"><span/><span/><span/></div><span>gcc<span className="footer-purple">intel</span></span></div><span>BUILT FOR THE NEXT WAVE OF GLOBAL CAPABILITY.</span><div className="footer-right"><span><span className="footer-status"/> SYSTEM ONLINE</span><span>v0.2.0 · LIVE NEWS</span></div></footer>
     </main>
   </div>
 }
