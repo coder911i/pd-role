@@ -21,9 +21,25 @@ export function getCompanyDomain(company) {
   return companyDomains[company.name] || new URL(company.source).hostname.replace(/^www\./, '')
 }
 
+const companyBrandSlugs = {
+  Microsoft:'microsoft', Google:'google', Amazon:'amazon', 'JPMorgan Chase':'jpmorgan',
+  'Walmart Global Tech':'walmart', 'Goldman Sachs':'goldmansachs', Bosch:'bosch',
+  Siemens:'siemens', Adobe:'adobe', 'American Express':'americanexpress', Target:'target',
+  Ericsson:'ericsson', NVIDIA:'nvidia', 'Wells Fargo':'wellsfargo', Airbus:'airbus', Uber:'uber'
+}
+
 export function getCompanyLogoUrl(company) {
+  const slug = companyBrandSlugs[company.name]
   const domain = getCompanyDomain(company)
-  return `https://cdn.simpleicons.org/${({ 'Microsoft':'microsoft','Google':'google','Amazon':'amazon','JPMorgan Chase':'jpmorgan','Walmart Global Tech':'walmart','Goldman Sachs':'goldmansachs','Bosch':'bosch','Siemens':'siemens','Adobe':'adobe','American Express':'americanexpress','Target':'target','Ericsson':'ericsson','NVIDIA':'nvidia','Wells Fargo':'wellsfargo','Airbus':'airbus','Uber':'uber' })[company.name] || domain.split('.')[0].replace(/[^a-z0-9]/gi, '')}`
+  // Only request Simple Icons for known slugs; arbitrary company/domain names are not valid slugs.
+  return slug
+    ? `https://cdn.simpleicons.org/${slug}`
+    : `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`
+}
+
+export function getCompanyFallbackLogoUrl(company) {
+  const domain = getCompanyDomain(company)
+  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`
 }
 
 export function getCompanyArticleUrl(company, liveSignals = []) {
