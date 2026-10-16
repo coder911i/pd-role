@@ -178,6 +178,7 @@ function App() {
   const [liveSignals, setLiveSignals] = useState([])
   const [signalsStatus, setSignalsStatus] = useState('Loading live news…')
   const [signalsUpdatedAt, setSignalsUpdatedAt] = useState(null)
+  const [signalsRetrying, setSignalsRetrying] = useState(false)
   const [active, setActive] = useState('overview')
   const [query, setQuery] = useState('')
   const [sector, setSector] = useState('All sectors')
@@ -232,6 +233,24 @@ function App() {
     const refreshId = setInterval(loadLiveSignals, 5 * 60 * 1000)
     return () => { cancelled = true; clearInterval(refreshId) }
   }, [])
+
+  const retryLiveSignals = async () => {
+    setSignalsRetrying(true)
+    setSignalsStatus('Reconnecting to live news…')
+    try {
+      const response = await fetch('/api/signals?refresh=' + Date.now(), { cache: 'no-store' })
+      const payload = await response.json()
+      if (!response.ok) throw new Error(payload.error || 'Feed unavailable')
+      setLiveSignals(Array.isArray(payload.data) ? payload.data : [])
+      setSignalsUpdatedAt(payload.meta?.fetchedAt || new Date().toISOString())
+      setSignalsStatus(payload.data?.length ? 'LIVE · GDELT · last 7 days' : 'No matching articles found')
+    } catch {
+      setLiveSignals([])
+      setSignalsStatus('Live feed is unreachable · try again shortly')
+    } finally {
+      setSignalsRetrying(false)
+    }
+  }
 
   const citySignalCount = cityName => liveSignals.filter(item => (item.title + ' ' + item.domain).toLowerCase().includes(cityName.toLowerCase())).length
   const filteredCompanies = useMemo(() => companyData.filter(c =>
@@ -341,7 +360,7 @@ function App() {
         <div className="demo-notice"><span><Activity size={14}/></span><div><strong>{signalsStatus}</strong><p>Live article headlines are fetched from GDELT. These are news mentions, not verified GCC counts, hiring numbers, or financial benchmarks.</p></div><span className="notice-mark">{liveSignals.length ? 'LIVE' : 'NO DATA'}</span></div>
         <div className="panel signal-panel live-news-panel">
           <div className="panel-heading"><div><span className="panel-kicker">LIVE NEWS MONITOR</span><h3>Latest GCC intelligence signals.</h3></div><span className="demo-label">{liveSignals.length} ARTICLES</span></div>
-          {liveSignals.length ? <div className="signal-list">{liveSignals.slice(0, 12).map(item => <article className="signal-item" key={item.id || item.url}><div className="signal-symbol purple"><Activity size={16}/></div><div className="signal-text"><strong><a href={item.url} target="_blank" rel="noreferrer">{item.title}</a></strong><p>{item.domain}{item.publishedAt ? ' · ' + item.publishedAt : ''}</p><span className="signal-tag">GDELT · LIVE NEWS</span></div><a className="icon-button" href={item.url} target="_blank" rel="noreferrer" aria-label="Open source article"><ExternalLink size={15}/></a></article>)}</div> : <div className="empty-state"><Activity size={20}/><strong>Live news is unavailable right now</strong><span>No demo headlines are shown as a fallback. Try again later.</span></div>}
+          {liveSignals.length ? <div className="signal-list">{liveSignals.slice(0, 12).map(item => <article className="signal-item" key={item.id || item.url}><div className="signal-symbol purple"><Activity size={16}/></div><div className="signal-text"><strong><a href={item.url} target="_blank" rel="noreferrer">{item.title}</a></strong><p>{item.domain}{item.publishedAt ? ' · ' + item.publishedAt : ''}</p><span className="signal-tag">GDELT · LIVE NEWS</span></div><a className="icon-button" href={item.url} target="_blank" rel="noreferrer" aria-label="Open source article"><ExternalLink size={15}/></a></article>)}</div> : <div className="empty-state live-empty-state"><span className="empty-glass-icon"><Activity size={22}/></span><strong>{signalsRetrying ? 'Reconnecting to live news…' : 'No live headlines received'}</strong><span>We only show publisher-linked articles. No placeholder headlines or fabricated metrics.</span><button className="secondary-button compact" onClick={retryLiveSignals} disabled={signalsRetrying}><Activity size={14}/>{signalsRetrying ? 'Retrying…' : 'Retry live feed'}</button></div>}
           <div className="chart-foot"><span>Source: GDELT DOC 2.0 public news index</span><span>{signalsUpdatedAt ? 'Updated ' + new Date(signalsUpdatedAt).toLocaleString() : 'Waiting for feed'}</span></div>
         </div>
       </section>
