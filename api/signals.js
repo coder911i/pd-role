@@ -42,7 +42,7 @@ export default async function handler(req, res) {
           id: item.url,
           title: String(item.title).slice(0, 300),
           url: item.url,
-          domain: item.domain || new URL(item.url).hostname.replace(/^www\\./, ''),
+          domain: item.domain || new URL(item.url).hostname.replace(/^www\./, ''),
           publishedAt: item.seendate || null,
           sourceCountry: item.sourcecountry || null,
           language: item.language || null,
