@@ -34,6 +34,6 @@ export default function handler(req, res) {
   return res.status(200).json({
     data: results,
     total: results.length,
-    meta: { demo: true, note: 'Prototype directory; verify current footprint and activity from linked primary sources.' }
+    meta: { type: 'reference-directory', liveVerified: false, note: 'Curated company reference list with official-source links. Verify current GCC footprint and activity from the linked primary sources.' }
   })
 }
