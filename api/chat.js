@@ -77,8 +77,10 @@ export default async function handler(req, res) {
 
     const payload = await upstream.json().catch(() => ({}))
     if (!upstream.ok) {
-      console.error('Groq request failed:', upstream.status)
-      return res.status(502).json({ error: 'The AI provider could not complete this request. Check the server-side Groq configuration and try again.' })
+      const providerMessage = typeof payload.error?.message === 'string' ? payload.error.message.slice(0, 240) : 'No provider error details returned.'
+      console.error('Groq request failed:', upstream.status, providerMessage)
+      const hint = upstream.status === 401 ? 'Check that GROQ_API_KEY is valid and current.' : upstream.status === 403 ? 'The key or account may not have access to this model.' : upstream.status === 404 ? 'Check the GROQ_MODEL name.' : upstream.status === 429 ? 'Groq rate limit or quota reached; check your Groq console.' : 'Check the Groq key, model, and provider status.'
+      return res.status(502).json({ error: `Groq returned HTTP ${upstream.status}. ${hint} Provider detail: ${providerMessage}` })
     }
 
     const answer = payload.choices?.[0]?.message?.content?.trim()
