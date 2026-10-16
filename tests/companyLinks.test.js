@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { getCompanyArticleUrl, getCompanyDomain, getCompanyLogoUrl, getPublisherDomain, getPublisherLogoUrl } from '../src/lib/companyLinks.js'
+import { getCompanyArticleUrl, getCompanyDomain, getCompanyLogoUrl, getCompanyFallbackLogoUrl, getPublisherDomain, getPublisherLogoUrl } from '../src/lib/companyLinks.js'
 
 const microsoft = {
   name: 'Microsoft',
@@ -9,7 +9,7 @@ const microsoft = {
 
 test('company logo URL uses the mapped official domain', () => {
   assert.equal(getCompanyDomain(microsoft), 'microsoft.com')
-  assert.equal(getCompanyLogoUrl(microsoft), 'https://www.google.com/s2/favicons?domain=microsoft.com&sz=128')
+  assert.equal(getCompanyLogoUrl(microsoft), 'https://cdn.simpleicons.org/microsoft')
 })
 
 test('unknown company domains fall back to the official source host', () => {
@@ -40,4 +40,13 @@ test('known publishers resolve to their own brand domain', () => {
 
 test('publisher domains that are already hostnames are normalized', () => {
   assert.equal(getPublisherDomain({ domain: 'www.hrtoday.in', url: 'https://news.google.com/rss/articles/example' }), 'hrtoday.in')
+})
+
+test('company logo fallback always uses that company domain', () => {
+  assert.equal(getCompanyFallbackLogoUrl(microsoft), 'https://www.google.com/s2/favicons?domain=microsoft.com&sz=128')
+})
+
+test('unmapped brands use their own source domain rather than another company logo', () => {
+  const example = { name: 'Example Co', source: 'https://www.example.com/news' }
+  assert.equal(getCompanyLogoUrl(example), 'https://www.google.com/s2/favicons?domain=example.com&sz=128')
 })
