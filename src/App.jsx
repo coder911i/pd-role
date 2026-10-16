@@ -56,7 +56,7 @@ function GlobeScene() {
       camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100)
       camera.position.z = 4.3
       renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5))
       renderer.setSize(mount.clientWidth, mount.clientHeight)
       renderer.setClearColor(0x000000, 0)
       mount.appendChild(renderer.domElement)
@@ -128,6 +128,16 @@ function GlobeScene() {
       }
       const observer = new ResizeObserver(resize)
       observer.observe(mount)
+      let isVisible = true
+      const visibilityObserver = new IntersectionObserver(entries => {
+        isVisible = entries.some(entry => entry.isIntersecting)
+        if (isVisible && !frame) animate()
+        else if (!isVisible && frame) {
+          cancelAnimationFrame(frame)
+          frame = 0
+        }
+      }, { threshold: 0 })
+      visibilityObserver.observe(mount)
       let pointerX = 0, pointerY = 0
       const move = (event) => {
         const rect = mount.getBoundingClientRect()
@@ -136,6 +146,10 @@ function GlobeScene() {
       }
       mount.addEventListener('pointermove', move)
       const animate = () => {
+        if (!isVisible) {
+          frame = 0
+          return
+        }
         frame = requestAnimationFrame(animate)
         globe.rotation.y += 0.0017
         globe.rotation.x += (pointerY - globe.rotation.x) * 0.015
@@ -146,6 +160,7 @@ function GlobeScene() {
       return () => {
         cancelAnimationFrame(frame)
         observer.disconnect()
+        visibilityObserver.disconnect()
         mount.removeEventListener('pointermove', move)
         renderer.dispose()
         mount.querySelectorAll('canvas').forEach(el => el.remove())
