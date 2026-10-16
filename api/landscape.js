@@ -22,12 +22,12 @@ export default function handler(req, res) {
       { label: 'AI professionals', value: '250,000+' }
     ],
     cityUnits: [
-      { city: 'Bengaluru', units: 320, label: 'Global 2000 GCC units' },
-      { city: 'Hyderabad', units: 165, label: 'Global 2000 GCC units' },
-      { city: 'NCR', units: 165, label: 'Global 2000 GCC units' },
-      { city: 'Mumbai', units: 165, label: 'Global 2000 GCC units' },
-      { city: 'Pune', units: 150, label: 'Global 2000 GCC units' },
-      { city: 'Chennai', units: 130, label: 'Global 2000 GCC units' }
+      { city: 'Bengaluru', units: 320, display: '320+', label: 'Global 2000 GCC units' },
+      { city: 'Hyderabad', units: 165, display: '165+', label: 'Global 2000 GCC units' },
+      { city: 'NCR', units: 165, display: '165+', label: 'Global 2000 GCC units' },
+      { city: 'Mumbai', units: 165, display: '165+', label: 'Global 2000 GCC units' },
+      { city: 'Pune', units: 150, display: '150+', label: 'Global 2000 GCC units' },
+      { city: 'Chennai', units: 130, display: '130+', label: 'Global 2000 GCC units' }
     ],
     sourceLabel: 'NASSCOM–Zinnov · India GCC Landscape Report 2026',
     sourceUrl: SOURCE_URL,
