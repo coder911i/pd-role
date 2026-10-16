@@ -33,3 +33,32 @@ export function getCompanyArticleUrl(company, liveSignals = []) {
     || liveSignals.find(item => item.title?.toLowerCase().includes(firstName))
   return article?.url || company.source
 }
+
+
+const publisherDomains = {
+  'ani news': 'aninews.in', 'ani': 'aninews.in', 'hrtoday.in': 'hrtoday.in',
+  'the futurum group': 'futurumgroup.com', 'zinnov': 'zinnov.com',
+  'india briefing': 'india-briefing.com', 'tata consultancy services': 'tcs.com',
+  'tcs': 'tcs.com', 'business standard': 'business-standard.com',
+  'economic times': 'economictimes.indiatimes.com', 'the economic times': 'economictimes.indiatimes.com',
+  'mint': 'livemint.com', 'moneycontrol': 'moneycontrol.com', 'reuters': 'reuters.com',
+  'bloomberg': 'bloomberg.com', 'yourstory': 'yourstory.com', 'the hindu': 'thehindu.com',
+  'hindustan times': 'hindustantimes.com', 'times of india': 'timesofindia.indiatimes.com',
+  'business today': 'businesstoday.in', 'ndtv profit': 'ndtvprofit.com', 'techcircle': 'techcircle.in'
+}
+export function getPublisherDomain(item) {
+  const label = String(item.domain || '').trim().toLowerCase()
+  if (publisherDomains[label]) return publisherDomains[label]
+  if (label.includes('.')) {
+    try { return new URL(label.startsWith('http') ? label : 'https://' + label).hostname.replace(/^www\./, '') } catch {}
+  }
+  try {
+    const host = new URL(item.url).hostname.replace(/^www\./, '')
+    if (!host.includes('news.google.com')) return host
+  } catch {}
+  return ''
+}
+export function getPublisherLogoUrl(item) {
+  const domain = getPublisherDomain(item)
+  return domain ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128` : ''
+}
