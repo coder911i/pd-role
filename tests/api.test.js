@@ -15,12 +15,14 @@ function response() {
   }
 }
 
-test('directory returns records and demo-data metadata', () => {
+test('directory returns source-linked reference records with transparent metadata', () => {
   const res = response()
   directory({ method: 'GET', query: {} }, res)
   assert.equal(res.statusCode, 200)
   assert.ok(Array.isArray(res.body.data))
-  assert.equal(res.body.meta.demo, true)
+  assert.equal(res.body.meta.type, 'reference-directory')
+  assert.equal(res.body.meta.liveVerified, false)
+  assert.match(res.body.meta.note, /official-source links/)
   assert.equal(res.body.total, res.body.data.length)
 })
 
