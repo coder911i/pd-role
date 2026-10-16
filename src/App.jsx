@@ -27,12 +27,12 @@ const companies = [
 ]
 
 const cityData = [
-  { city: 'Bengaluru', score: 94, talent: 96, cost: 74, momentum: '+18%', focus: 'Product, AI & engineering', hue: '#9b8cff' },
-  { city: 'Hyderabad', score: 91, talent: 91, cost: 82, momentum: '+22%', focus: 'Cloud, pharma & enterprise tech', hue: '#67d8ff' },
-  { city: 'Pune', score: 84, talent: 84, cost: 86, momentum: '+14%', focus: 'Engineering & manufacturing', hue: '#f3b96a' },
-  { city: 'Chennai', score: 82, talent: 81, cost: 88, momentum: '+12%', focus: 'Auto, BFSI & SaaS', hue: '#80e0bb' },
-  { city: 'Gurugram', score: 80, talent: 82, cost: 69, momentum: '+11%', focus: 'BFSI, consulting & analytics', hue: '#f38cba' },
-  { city: 'Mumbai', score: 78, talent: 78, cost: 61, momentum: '+9%', focus: 'Finance, risk & fintech', hue: '#ff9b75' }
+  { city: 'Bengaluru', focus: 'Product, AI & engineering', hue: '#9b8cff' },
+  { city: 'Hyderabad', focus: 'Cloud, pharma & enterprise tech', hue: '#67d8ff' },
+  { city: 'Pune', focus: 'Engineering & manufacturing', hue: '#f3b96a' },
+  { city: 'Chennai', focus: 'Auto, BFSI & SaaS', hue: '#80e0bb' },
+  { city: 'Gurugram', focus: 'BFSI, consulting & analytics', hue: '#f38cba' },
+  { city: 'Mumbai', focus: 'Finance, risk & fintech', hue: '#ff9b75' }
 ]
 
 const navItems = [
@@ -175,6 +175,9 @@ function MetricCard({ label, value, delta, icon: Icon, foot, bars, color = 'viol
 
 function App() {
   const [companyData, setCompanyData] = useState(companies)
+  const [liveSignals, setLiveSignals] = useState([])
+  const [signalsStatus, setSignalsStatus] = useState('Loading live news…')
+  const [signalsUpdatedAt, setSignalsUpdatedAt] = useState(null)
   const [active, setActive] = useState('overview')
   const [query, setQuery] = useState('')
   const [sector, setSector] = useState('All sectors')
@@ -214,10 +217,21 @@ function App() {
     fetch('/api/directory')
       .then(response => response.ok ? response.json() : Promise.reject(new Error('Directory API unavailable')))
       .then(payload => { if (!cancelled && Array.isArray(payload.data)) setCompanyData(payload.data) })
-      .catch(() => { /* Keep the bundled demo data available when running without serverless functions. */ })
+      .catch(() => { if (!cancelled) setCompanyData([]) })
+    fetch('/api/signals')
+      .then(response => response.ok ? response.json() : Promise.reject(new Error('Live news unavailable')))
+      .then(payload => {
+        if (!cancelled && Array.isArray(payload.data)) {
+          setLiveSignals(payload.data)
+          setSignalsUpdatedAt(payload.meta?.fetchedAt || new Date().toISOString())
+          setSignalsStatus(payload.meta?.live ? 'LIVE · GDELT · last 7 days' : 'Live feed unavailable')
+        } else if (!cancelled) setSignalsStatus('Live feed returned no articles')
+      })
+      .catch(() => { if (!cancelled) { setLiveSignals([]); setSignalsStatus('Live feed unavailable · retry later') } })
     return () => { cancelled = true }
   }, [])
 
+  const citySignalCount = cityName => liveSignals.filter(item => (item.title + ' ' + item.domain).toLowerCase().includes(cityName.toLowerCase())).length
   const filteredCompanies = useMemo(() => companyData.filter(c =>
     (c.name + ' ' + c.sector + ' ' + c.city + ' ' + c.signal).toLowerCase().includes(query.toLowerCase()) &&
     (sector === 'All sectors' || c.sector === sector) &&
@@ -329,16 +343,11 @@ function App() {
 
       <section className="content-section" id="signals">
         <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> THE LANDSCAPE</div><h2>India, in focus.</h2><p className="section-subtitle">A live-feeling command centre for your GCC research workflow.</p></div><div className="select-wrap"><span>HORIZON</span><select value={timeframe} onChange={e => setTimeframe(e.target.value)}><option>12 months</option><option>6 months</option><option>24 months</option></select><ChevronDown size={13}/></div></div>
-        <div className="demo-notice"><span><Activity size={14}/></span><div><strong>Prototype data environment</strong><p>Metrics and momentum indicators below are illustrative UI data, not verified market statistics. Company names link to official sources for independent validation.</p></div><span className="notice-mark">DEMO</span></div>
-        <div className="metrics-grid">
-          <MetricCard label="COMPANY RECORDS" value="16" delta="+4.8%" icon={Building2} foot="In this sample directory" bars={[28,42,34,58,49,73,61,85]} />
-          <MetricCard label="CITY HUBS MAPPED" value="06" delta="+2 hubs" icon={Globe2} foot="Illustrative coverage map" bars={[35,32,47,44,66,60,77,84]} color="cyan"/>
-          <MetricCard label="SECTOR CLUSTERS" value="05" delta="+1 cluster" icon={Target} foot="Across demo records" bars={[25,39,32,53,48,68,59,80]} color="orange"/>
-          <MetricCard label="RESEARCH SIGNALS" value="24" delta="Demo" icon={Activity} foot="Sample research prompts" bars={[38,28,51,44,61,53,75,68]} color="green"/>
-        </div>
-        <div className="overview-grid">
-          <article className="panel city-panel"><div className="panel-heading"><div><span className="panel-kicker">01 / CITY INTELLIGENCE</span><h3>Where capability clusters.</h3></div><button className="text-button" onClick={() => jump('cities')}>Compare cities <ArrowRight size={14}/></button></div><div className="city-chart">{cityData.slice(0,5).map((c,i) => <button className="city-row" key={c.city} onClick={() => { setSelectedCity(c.city); jump('cities') }}><span className="city-rank">0{i+1}</span><span className="city-name">{c.city}</span><div className="bar-track"><div className="bar-fill" style={{width: c.score + '%', background: 'linear-gradient(90deg, ' + c.hue + ', ' + c.hue + '55)'}}/></div><span className="city-score">{c.score}</span><span className="city-momentum">{c.momentum}</span></button>)}</div><div className="chart-foot"><span><i className="legend-dot"/> Illustrative capability score (0–100)</span><span>Not a market benchmark</span></div></article>
-          <article className="panel signal-panel"><div className="panel-heading"><div><span className="panel-kicker">02 / SIGNAL RADAR</span><h3>What to watch next.</h3></div><div className="radar-icon"><Activity size={17}/></div></div><div className="signal-list"><div className="signal-item"><div className="signal-symbol purple"><Sparkles size={16}/></div><div className="signal-text"><strong>AI capability build-out</strong><p>Track new AI labs, platform teams, and research roles.</p><span className="signal-tag">TECHNOLOGY</span></div><ArrowUpRight size={15} className="muted"/></div><div className="signal-item"><div className="signal-symbol blue"><Layers3 size={16}/></div><div className="signal-text"><strong>Multi-city operating models</strong><p>Compare talent depth with cost and retention needs.</p><span className="signal-tag">LOCATION STRATEGY</span></div><ArrowUpRight size={15} className="muted"/></div><div className="signal-item"><div className="signal-symbol amber"><ShieldCheck size={16}/></div><div className="signal-text"><strong>Risk & resilience teams</strong><p>Map BFSI and enterprise control functions.</p><span className="signal-tag">BFSI</span></div><ArrowUpRight size={15} className="muted"/></div></div><button className="panel-bottom-link" onClick={() => jump('analyst')}>Turn a signal into a research brief <ArrowRight size={14}/></button></article>
+        <div className="demo-notice"><span><Activity size={14}/></span><div><strong>{signalsStatus}</strong><p>Live article headlines are fetched from GDELT. These are news mentions, not verified GCC counts, hiring numbers, or financial benchmarks.</p></div><span className="notice-mark">{liveSignals.length ? 'LIVE' : 'NO DATA'}</span></div>
+        <div className="panel signal-panel live-news-panel">
+          <div className="panel-heading"><div><span className="panel-kicker">LIVE NEWS MONITOR</span><h3>Latest GCC intelligence signals.</h3></div><span className="demo-label">{liveSignals.length} ARTICLES</span></div>
+          {liveSignals.length ? <div className="signal-list">{liveSignals.slice(0, 12).map(item => <article className="signal-item" key={item.id || item.url}><div className="signal-symbol purple"><Activity size={16}/></div><div className="signal-text"><strong><a href={item.url} target="_blank" rel="noreferrer">{item.title}</a></strong><p>{item.domain}{item.publishedAt ? ' · ' + item.publishedAt : ''}</p><span className="signal-tag">GDELT · LIVE NEWS</span></div><a className="icon-button" href={item.url} target="_blank" rel="noreferrer" aria-label="Open source article"><ExternalLink size={15}/></a></article>)}</div> : <div className="empty-state"><Activity size={20}/><strong>Live news is unavailable right now</strong><span>No demo headlines are shown as a fallback. Try again later.</span></div>}
+          <div className="chart-foot"><span>Source: GDELT DOC 2.0 public news index</span><span>{signalsUpdatedAt ? 'Updated ' + new Date(signalsUpdatedAt).toLocaleString() : 'Waiting for feed'}</span></div>
         </div>
       </section>
 
@@ -351,9 +360,17 @@ function App() {
       </section>
 
       <section className="content-section cities-section" id="cities">
-        <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> LOCATION STRATEGY</div><h2>Choose your next hub.</h2><p className="section-subtitle">Explore how the city comparison experience works with editable city selection.</p></div><div className="select-wrap"><span>FOCUS CITY</span><select value={selectedCity} onChange={e => setSelectedCity(e.target.value)}>{cityData.map(c => <option key={c.city}>{c.city}</option>)}</select><ChevronDown size={13}/></div></div>
-        <div className="city-detail-grid"><div className="panel city-detail-card"><div className="city-detail-top"><div><span className="panel-kicker">SELECTED CITY</span><h3>{selectedCity}</h3><p>{cityData.find(c => c.city === selectedCity)?.focus}</p></div><div className="city-orb" style={{'--orb-color': cityData.find(c => c.city === selectedCity)?.hue}}><MapPin size={25}/></div></div><div className="city-detail-score"><span>Illustrative capability score</span><strong>{cityData.find(c => c.city === selectedCity)?.score}<small>/100</small></strong></div><div className="score-track"><span style={{width: cityData.find(c => c.city === selectedCity)?.score + '%', background: cityData.find(c => c.city === selectedCity)?.hue}}/></div><div className="city-facts"><div><span>TALENT INDEX</span><strong>{cityData.find(c => c.city === selectedCity)?.talent}<small>/100</small></strong></div><div><span>COST INDEX</span><strong>{cityData.find(c => c.city === selectedCity)?.cost}<small>/100</small></strong></div><div><span>DEMO MOMENTUM</span><strong className="momentum">{cityData.find(c => c.city === selectedCity)?.momentum}</strong></div></div><div className="city-disclaimer"><CircleHelp size={14}/> All scores are mock values used to demonstrate the product. Replace with sourced methodology and current market data.</div></div>
-          <div className="panel compare-card"><div className="panel-heading"><div><span className="panel-kicker">CITY BENCHMARK</span><h3>Compare the hubs.</h3></div><span className="demo-label">ILLUSTRATIVE</span></div><div className="compare-head"><span>CITY</span><span>TALENT</span><span>COST</span><span>MOMENTUM</span></div>{cityData.map(c => <button className={'compare-row ' + (selectedCity === c.city ? 'chosen' : '')} key={c.city} onClick={() => setSelectedCity(c.city)}><span className="compare-city"><i style={{background:c.hue}}/>{c.city}</span><span>{c.talent}</span><span>{c.cost}</span><span className="momentum">{c.momentum}</span></button>)}</div></div>
+        <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> LIVE LOCATION SIGNALS</div><h2>Follow the city coverage.</h2><p className="section-subtitle">City views now use live article matches, not fabricated talent, cost, or momentum scores.</p></div><div className="select-wrap"><span>FOCUS CITY</span><select value={selectedCity} onChange={e => setSelectedCity(e.target.value)}>{cityData.map(c => <option key={c.city}>{c.city}</option>)}</select><ChevronDown size={13}/></div></div>
+        <div className="city-detail-grid">
+          <div className="panel city-detail-card">
+            <div className="city-detail-top"><div><span className="panel-kicker">SELECTED CITY</span><h3>{selectedCity}</h3><p>{cityData.find(c => c.city === selectedCity)?.focus}</p></div><div className="city-orb" style={{'--orb-color': cityData.find(c => c.city === selectedCity)?.hue}}><MapPin size={25}/></div></div>
+            <div className="city-detail-score"><span>Live news headlines mentioning this city</span><strong>{citySignalCount(selectedCity)}<small> matches</small></strong></div>
+            <div className="score-track"><span style={{width: Math.min(citySignalCount(selectedCity) * 12, 100) + '%', background: cityData.find(c => c.city === selectedCity)?.hue}}/></div>
+            <div className="city-facts"><div><span>FEED WINDOW</span><strong>7<small> days</small></strong></div><div><span>LIVE ARTICLES</span><strong>{liveSignals.length}</strong></div><div><span>FEED STATUS</span><strong className="momentum">{liveSignals.length ? 'LIVE' : 'OFFLINE'}</strong></div></div>
+            <div className="city-disclaimer"><CircleHelp size={14}/> News mentions measure media coverage only; they do not represent GCC count, hiring volume, talent supply, or city cost.</div>
+          </div>
+          <div className="panel compare-card"><div className="panel-heading"><div><span className="panel-kicker">LIVE COVERAGE COMPARISON</span><h3>News mentions by city.</h3></div><span className="demo-label">{signalsStatus}</span></div><div className="compare-head"><span>CITY</span><span>MENTIONS</span><span>FOCUS</span><span>STATUS</span></div>{cityData.map(c => <button className={'compare-row ' + (selectedCity === c.city ? 'chosen' : '')} key={c.city} onClick={() => setSelectedCity(c.city)}><span className="compare-city"><i style={{background:c.hue}}/>{c.city}</span><span>{citySignalCount(c.city)}</span><span>{c.focus}</span><span className="momentum">{liveSignals.length ? 'LIVE FEED' : 'NO DATA'}</span></button>)}</div>
+        </div>
       </section>
 
       <section className="content-section analyst-section" id="analyst">
