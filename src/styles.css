@@ -420,3 +420,29 @@ button, a { opacity:1; }
 .compare-card .compare-row.chosen .momentum { color:#8be8c2 !important; -webkit-text-fill-color:#8be8c2 !important; }
 .compare-card .demo-label { background:#14151b !important; color:#c9cce0 !important; border-color:#353743 !important; }
 
+
+
+/* Fix live news panel header: dark surface with readable text */
+.live-news-panel .panel-heading {
+  background: #0b0b0d !important;
+  color: #f7f7fa !important;
+  border-bottom: 1px solid #292a33 !important;
+}
+.live-news-panel .panel-heading h3,
+.live-news-panel .panel-heading h2 {
+  color: #f7f7fa !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #f7f7fa !important;
+}
+.live-news-panel .panel-heading .panel-kicker {
+  color: #b8bac8 !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #b8bac8 !important;
+}
+.live-news-panel .panel-heading .demo-label {
+  background: #14151b !important;
+  border: 1px solid #353743 !important;
+  color: #c9cce0 !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #c9cce0 !important;
+}
