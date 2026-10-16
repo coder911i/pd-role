@@ -40,7 +40,8 @@ const navItems = [
   { id: 'directory', label: 'GCC directory', icon: Building2 },
   { id: 'cities', label: 'City intelligence', icon: Globe2 },
   { id: 'signals', label: 'Market signals', icon: Activity },
-  { id: 'analyst', label: 'AI analyst', icon: Sparkles }
+  { id: 'analyst', label: 'AI analyst', icon: Sparkles },
+  { id: 'library', label: 'Research library', icon: Database }
 ]
 
 function GlobeScene() {
@@ -180,6 +181,8 @@ function App() {
   const [city, setCity] = useState('All cities')
   const [selectedCity, setSelectedCity] = useState('Bengaluru')
   const [saved, setSaved] = useState(() => { try { return JSON.parse(localStorage.getItem('gcc-intel-saved') || '[]') } catch { return [] } })
+  const [reports, setReports] = useState([])
+  const [reportStatus, setReportStatus] = useState('Loading saved research…')
   const [mobileNav, setMobileNav] = useState(false)
   const [question, setQuestion] = useState('')
   const [messages, setMessages] = useState([
@@ -198,6 +201,11 @@ function App() {
       .then(response => response.ok ? response.json() : Promise.reject(new Error('Saved list unavailable')))
       .then(payload => { if (!cancelled && Array.isArray(payload.data)) setSaved(payload.data.map(item => item.name)) })
       .catch(() => { /* Local saved list remains available without database configuration. */ })
+    fetch('/api/session', { credentials: 'same-origin' })
+      .then(response => response.ok ? fetch('/api/reports', { credentials: 'same-origin' }) : Promise.reject(new Error('Session unavailable')))
+      .then(response => response.ok ? response.json() : Promise.reject(new Error('Reports API unavailable')))
+      .then(payload => { if (!cancelled && Array.isArray(payload.data)) { setReports(payload.data); setReportStatus('Synced to your research session') } else if (!cancelled) setReportStatus('No saved reports yet') })
+      .catch(() => { if (!cancelled) setReportStatus('Local session · add DATABASE_URL to enable cloud persistence') })
     fetch('/api/directory')
       .then(response => response.ok ? response.json() : Promise.reject(new Error('Directory API unavailable')))
       .then(payload => { if (!cancelled && Array.isArray(payload.data)) setCompanyData(payload.data) })
@@ -237,6 +245,31 @@ function App() {
     }
   }
 
+  const saveLatestReport = async () => {
+    const userQuestion = [...messages].reverse().find(m => m.role === 'user')?.text
+    const answer = [...messages].reverse().find(m => m.role === 'assistant' && m.text !== 'Thinking…')?.text
+    if (!userQuestion || !answer) return
+    setReportStatus('Saving report…')
+    try {
+      const session = await fetch('/api/session', { credentials: 'same-origin' })
+      if (!session.ok) throw new Error('Session unavailable')
+      const response = await fetch('/api/reports', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: userQuestion.slice(0, 90), prompt: userQuestion, body: answer, model: 'groq-or-demo' }) })
+      const payload = await response.json()
+      if (!response.ok) throw new Error(payload.error || 'Could not save report')
+      setReports(prev => [payload.data, ...prev.filter(item => item.id !== payload.data.id)])
+      setReportStatus('Report saved')
+    } catch {
+      const localReport = { id: 'local-' + Date.now(), title: userQuestion.slice(0, 90), prompt: userQuestion, body: answer, model: 'local-only', created_at: new Date().toISOString() }
+      setReports(prev => [localReport, ...prev])
+      setReportStatus('Saved in this session only · configure database for cloud storage')
+    }
+  }
+  const deleteReport = async report => {
+    setReports(prev => prev.filter(item => item.id !== report.id))
+    if (String(report.id).startsWith('local-')) return
+    try { await fetch('/api/reports', { method: 'DELETE', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: report.id }) }) } catch { /* UI remains responsive; refresh to retry. */ }
+  }
+
   const toggleSaved = name => {
     const company = companyData.find(item => item.name === name) || companies.find(item => item.name === name)
     const wasSaved = saved.includes(name)
@@ -263,7 +296,7 @@ function App() {
       <nav>{navItems.map(item => <button key={item.id} onClick={() => jump(item.id)} className={'nav-item ' + (active === item.id ? 'active' : '')}><item.icon size={17}/><span>{item.label}</span>{item.id === 'analyst' && <span className="nav-new">AI</span>}</button>)}</nav>
       <div className="sidebar-divider" />
       <div className="nav-label">YOUR RESEARCH</div>
-      <button className="nav-item" onClick={() => { setQuery(''); setSector('All sectors'); setCity('All cities'); jump('directory') }}><Bookmark size={17}/><span>Saved companies</span><span className="nav-count">{saved.length}</span></button>
+      <button className="nav-item" onClick={() => jump('library')}><Bookmark size={17}/><span>Saved companies</span><span className="nav-count">{saved.length}</span></button>
       <button className="nav-item" onClick={() => jump('signals')}><TrendingUp size={17}/><span>Signal watchlist</span><span className="status-dot" /></button>
       <div className="sidebar-bottom">
         <div className="plan-card"><div className="plan-icon"><Zap size={16}/></div><div><strong>Intel Pro workspace</strong><span>Prototype environment</span></div><ArrowUpRight size={15}/></div>
@@ -318,7 +351,22 @@ function App() {
       <section className="content-section analyst-section" id="analyst">
         <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> RESEARCH COPILOT</div><h2>Ask better questions.</h2><p className="section-subtitle">A conversational interface ready to connect to your Groq API.</p></div><div className="ai-status"><span/> GROQ-READY / SERVER KEY REQUIRED</div></div>
         <div className="analyst-layout"><div className="analyst-intro"><div className="ai-orb"><div className="ai-orb-inner"><Sparkles size={28}/></div><span className="orb-ring ring-a"/><span className="orb-ring ring-b"/></div><h3>Research, without<br/><span>the blank page.</span></h3><p>Use prompts to shape a city shortlist, identify sector clusters, or turn an emerging signal into a structured research brief.</p><div className="capability-list"><span><Check size={14}/> City comparisons</span><span><Check size={14}/> Company discovery</span><span><Check size={14}/> Research brief drafts</span></div><div className="connect-note"><Database size={15}/><span>Demo responses are local. Add your Groq endpoint on the server before enabling live AI.</span></div></div>
-          <div className="panel chat-panel"><div className="chat-header"><div className="chat-avatar"><Sparkles size={16}/></div><div><strong>GCC Research Analyst</strong><span><i/> Prototype assistant · Sample data</span></div><button className="icon-button" onClick={() => setMessages([{role:'assistant',text:'Hi. I’m your GCC research copilot. Ask me to compare cities, map competitors, or build a shortlist. I’ll keep this prototype’s sample data clearly labelled.'}])} title="Reset chat"><Activity size={16}/></button></div><div className="chat-messages">{messages.map((m,i) => <div className={'chat-message ' + m.role} key={i}>{m.role === 'assistant' && <div className="message-avatar"><Sparkles size={13}/></div>}<div className="message-bubble">{m.text}</div></div>)}</div><div className="prompt-chips"><button onClick={() => ask('Compare Bengaluru and Hyderabad for an AI GCC')}>Compare tech hubs <ArrowUpRight size={12}/></button><button onClick={() => ask('Which cities are more affordable?')}>Explore cost signals <ArrowUpRight size={12}/></button><button onClick={() => ask('Build a BFSI company shortlist')}>Find BFSI companies <ArrowUpRight size={12}/></button></div><form className="chat-input-row" onSubmit={e => {e.preventDefault(); ask()}}><input value={question} onChange={e => setQuestion(e.target.value)} placeholder="Ask about cities, companies or sector signals…"/><button type="submit" disabled={!question.trim()} aria-label="Send message"><Send size={16}/></button></form><div className="chat-footnote">Prototype assistant · Not connected to Groq · Validate outputs before decisions</div></div></div>
+          <div className="panel chat-panel"><div className="chat-header"><div className="chat-avatar"><Sparkles size={16}/></div><div><strong>GCC Research Analyst</strong><span><i/> Groq endpoint · Demo market data</span></div><button className="icon-button" onClick={() => setMessages([{role:'assistant',text:'Hi. I’m your GCC research copilot. Ask me to compare cities, map competitors, or build a shortlist. I’ll keep this prototype’s sample data clearly labelled.'}])} title="Reset chat"><Activity size={16}/></button></div><div className="chat-messages">{messages.map((m,i) => <div className={'chat-message ' + m.role} key={i}>{m.role === 'assistant' && <div className="message-avatar"><Sparkles size={13}/></div>}<div className="message-bubble">{m.text}</div></div>)}</div><div className="prompt-chips"><button onClick={() => ask('Compare Bengaluru and Hyderabad for an AI GCC')}>Compare tech hubs <ArrowUpRight size={12}/></button><button onClick={() => ask('Which cities are more affordable?')}>Explore cost signals <ArrowUpRight size={12}/></button><button onClick={() => ask('Build a BFSI company shortlist')}>Find BFSI companies <ArrowUpRight size={12}/></button></div><form className="chat-input-row" onSubmit={e => {e.preventDefault(); ask()}}><input value={question} onChange={e => setQuestion(e.target.value)} placeholder="Ask about cities, companies or sector signals…"/><button type="submit" disabled={!question.trim()} aria-label="Send message"><Send size={16}/></button></form><div className="chat-footnote">Server-side AI endpoint · Responses can be wrong; verify important claims.</div><div style={{padding:'0 14px 14px',display:'flex',justifyContent:'flex-end'}}><button className="text-button" onClick={saveLatestReport}><Bookmark size={13}/> Save latest answer</button></div></div></div>
+      </section>
+
+      <section className="content-section" id="library">
+        <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> YOUR WORKSPACE</div><h2>Research library.</h2><p className="section-subtitle">Saved companies and research answers, kept in one place.</p></div><span className="demo-label">{reportStatus}</span></div>
+        <div className="overview-grid">
+          <article className="panel city-panel">
+            <div className="panel-heading"><div><span className="panel-kicker">SAVED COMPANIES</span><h3>Your shortlist</h3></div><span className="demo-label">{saved.length} SAVED</span></div>
+            {saved.length ? <div className="signal-list">{saved.map(name => { const company = companyData.find(c => c.name === name) || companies.find(c => c.name === name); return <div className="signal-item" key={name}><div className="signal-symbol purple"><Building2 size={16}/></div><div className="signal-text"><strong>{name}</strong><p>{company ? company.city + ' · ' + company.sector : 'Saved company'}</p></div><button className="icon-button" onClick={() => toggleSaved(name)} aria-label={'Remove ' + name}><X size={14}/></button></div> })}</div> : <div className="empty-state"><Bookmark size={20}/><strong>No saved companies yet</strong><span>Save a company from the directory to start a shortlist.</span><button className="text-button" onClick={() => jump('directory')}>Browse directory <ArrowRight size={13}/></button></div>}
+          </article>
+          <article className="panel city-panel">
+            <div className="panel-heading"><div><span className="panel-kicker">RESEARCH REPORTS</span><h3>Saved AI answers</h3></div><span className="demo-label">{reports.length} REPORTS</span></div>
+            {reports.length ? <div className="signal-list">{reports.map(report => <div className="signal-item" key={report.id}><div className="signal-symbol blue"><Sparkles size={16}/></div><div className="signal-text"><strong>{report.title}</strong><p>{report.body}</p><span className="signal-tag">{new Date(report.created_at).toLocaleDateString()}</span></div><button className="icon-button" onClick={() => deleteReport(report)} aria-label="Delete report"><X size={14}/></button></div>)}</div> : <div className="empty-state"><Database size={20}/><strong>No reports saved</strong><span>Ask the AI analyst a question, then choose “Save latest answer”.</span><button className="text-button" onClick={() => jump('analyst')}>Open AI analyst <ArrowRight size={13}/></button></div>}
+          </article>
+        </div>
+        <p className="section-subtitle" style={{marginTop:14}}>Cloud persistence requires a Neon PostgreSQL DATABASE_URL. Without it, saved items use local/session fallback.</p>
       </section>
 
       <footer className="footer"><div className="footer-brand"><div className="brand-mark small"><span/><span/><span/></div><span>gcc<span className="footer-purple">intel</span></span></div><span>BUILT FOR THE NEXT WAVE OF GLOBAL CAPABILITY.</span><div className="footer-right"><span><span className="footer-status"/> SYSTEM ONLINE</span><span>v0.1.0 · DEMO</span></div></footer>
