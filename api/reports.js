@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   const sessionId = readSession(req)
   if (!sessionId) return res.status(401).json({ error: 'Session missing. Call GET /api/session first.' })
   const sql = getSql()
-  if (!sql) return res.status(503).json({ error: 'Persistence is not configured. Add DATABASE_URL in Vercel.' })
+  if (!sql) return res.status(503).json({ error: 'Persistence is not configured. Add DATABASE_URL_POOLED or DATABASE_URL in Vercel.' })
   try {
     await ensureSchema(sql)
     if (req.method === 'GET') {
