@@ -1,90 +1,152 @@
-# GCC Intel — Intelligence, in orbit
+<div align="center">
 
-A responsive GCC research workspace built with React, Vite, Three.js, and Vercel serverless APIs. The interface is designed for mobile and desktop, with an animated 3D globe, company discovery, city comparison, saved research, and a Groq-powered analyst.
+# GCC Intel
 
-## Product areas
+### Find the signal. Choose the city.
 
-- **Overview:** live GCC-related news headlines fetched through the public GDELT DOC 2.0 API.
-- **GCC directory:** searchable company list with city/sector filters and official-source links.
-- **City intelligence:** city-level news mention counts from the live feed; no fabricated talent, cost, or momentum scores.
-- **Market signals:** current article headlines with source domains, publication timestamps when available, and direct links.
-- **AI analyst:** server-side Groq chat through `/api/chat`.
-- **Research library:** saved company shortlist and saved analyst answers.
-- **Mobile and desktop:** responsive navigation, compact mobile cards, reduced-motion support.
+**An evidence-led research workspace for comparing India's Global Capability Centre ecosystem.**
 
-## Stack
+[![Live Demo](https://img.shields.io/badge/Live-Demo-2864FF?style=for-the-badge&logo=vercel&logoColor=white)](https://pd-role.vercel.app)
+[![Build](https://img.shields.io/github/actions/workflow/status/coder911i/pd-role/ci.yml?branch=main&style=for-the-badge&label=CI)](https://github.com/coder911i/pd-role/actions)
+[![License](https://img.shields.io/badge/License-Not%20specified-64748b?style=for-the-badge)](#project-status)
 
-- React 18 + Vite 6
-- Three.js + Lucide React
-- Vercel serverless API routes
-- Groq Chat Completions API
-- Neon PostgreSQL via `@neondatabase/serverless`
-- Node built-in test runner + GitHub Actions CI
+[Live app](https://pd-role.vercel.app) · [Architecture](docs/ARCHITECTURE.md) · [Production checklist](docs/PRODUCTION_CHECKLIST.md) · [Pitch deck brief](docs/PITCH_DECK_PROMPT.md)
 
-## Local development
+</div>
 
-Requires Node.js 20 or later.
+---
+
+## Product preview
+
+<p align="center">
+  <img src="assets/readme-preview.svg" alt="Illustrative GCC Intel dashboard preview showing city intelligence, linked market signals, and a research assistant" width="100%">
+</p>
+
+> **Preview note:** This is an illustrative interface mockup, not a captured screenshot of the live application. Live news and AI responses depend on external providers and configured environment variables.
+
+## Why this exists
+
+GCC location research is scattered across company pages, news coverage, policy documents, market reports, and analyst notes. **GCC Intel brings several of those signals into one place** so a researcher can explore a reference company directory, scan linked news, compare city-level media mentions, and save research for follow-up.
+
+The product is a research aid—not an authoritative census or an automated location recommendation engine.
+
+## What you can do
+
+| Area | Capability | Important limitation |
+|---|---|---|
+| **Company directory** | Search a reference list and filter by city or sector; follow company/source links. | The list is not a continuously verified census of GCC offices. |
+| **Market signals** | Fetch GCC-related news from GDELT and open the source article. | Coverage depends on provider availability, query matching, and rate limits. |
+| **City intelligence** | Compare city-level article-mention signals from the retrieved feed. | Article mentions are not a proxy for talent, GCC counts, hiring, or operating cost. |
+| **Research analyst** | Ask questions through the server-side Groq API integration. | Availability and answer quality depend on configuration and retrieved evidence. |
+| **Research library** | Save companies and research reports for later. | Persistent storage requires a configured Neon database; sessions are anonymous, not user accounts. |
+| **Responsive UI** | Use the workspace on desktop and mobile. | Validate key flows in target browsers before production launch. |
+
+## Run locally
+
+**One-line clone + install + run:**
+
+```bash
+git clone https://github.com/coder911i/pd-role.git && cd pd-role && npm install && npm run dev
+```
+
+Open the local URL printed by Vite.
+
+**Requirements:** Node.js 20+ and npm.
+
+For a production build and tests:
+
+```bash
+npm run build && npm test
+```
+
+To preview the built frontend locally:
+
+```bash
+npm run build && npm run preview
+```
+
+> The plain Vite dev server serves the frontend only. To run Vercel-style `/api/*` routes locally, use `npx vercel dev` and configure local environment variables.
+
+## Production deployment
+
+Deploy on Vercel by importing this repository, using the **Vite** framework preset, build command `npm run build`, and output directory `dist`. Configure server-side environment variables before testing API-dependent features.
+
+| Variable | Required for | Notes |
+|---|---|---|
+| `GROQ_API_KEY` | AI analyst | Secret; server-side only. Never expose it as a `VITE_*` variable. |
+| `GROQ_MODEL` | Optional model override | Defaults to `openai/gpt-oss-120b` in the current API implementation. |
+| `DATABASE_URL_POOLED` | Saved companies/reports | Recommended pooled Neon PostgreSQL URL for serverless runtime. |
+| `DATABASE_URL` | Database fallback | Optional direct connection string. |
+| `SESSION_SECRET` | Signed anonymous sessions | Use a long, random production secret. |
+
+After changing environment variables, redeploy and verify the production deployment. Never commit real credentials to Git.
+
+See [Production checklist](docs/PRODUCTION_CHECKLIST.md) for launch checks and [Architecture](docs/ARCHITECTURE.md) for system boundaries.
+
+## Architecture
+
+```text
+React + Vite UI
+  ├── Company directory ─────── /api/directory
+  ├── News signals ──────────── /api/signals ── GDELT DOC 2.0
+  ├── AI research analyst ───── /api/chat ───── Groq API
+  └── Saved research ────────── /api/saved, /api/reports
+                                      │
+                                Neon PostgreSQL
+```
+
+- **Frontend:** React 18, Vite 6, Three.js, Lucide React.
+- **API:** Vercel serverless functions.
+- **AI:** Groq Chat Completions API.
+- **Persistence:** optional Neon PostgreSQL via `@neondatabase/serverless`.
+- **Quality:** Node's built-in test runner and GitHub Actions.
+
+Repository layout:
+
+```text
+api/                 Serverless API routes and shared utilities
+src/                 React application, styles, and frontend helpers
+src/lib/             Reusable helpers with deterministic behavior
+tests/               Unit and API contract tests
+docs/                Architecture, production checklist, deck brief
+assets/              README product-preview artwork
+.github/workflows/   CI build and test workflow
+```
+
+## Quality checks
+
+Run before submitting a change:
 
 ```bash
 npm install
-npm run dev
-```
-
-Build and tests:
-
-```bash
 npm run build
 npm test
 ```
 
-Vite serves the frontend locally. Vercel-style `/api/*` functions do not run under plain Vite by default; use Vercel CLI (`npx vercel dev`) to test the API routes locally.
+CI runs the production build and test suite on pushes to `main`, pull requests, and manual dispatches. A green unit-test run does not replace browser-based checks of the deployed application.
 
-## Vercel deployment
+## Data integrity and known limitations
 
-Import this repository into Vercel. Framework preset: **Vite**. Build command: `npm run build`; output directory: `dist`. The `api/` directory contains Vercel serverless functions.
+- The directory is a reference dataset; city and sector labels may need fresh official-source verification.
+- News is sourced through GDELT. External source coverage, article metadata, and rate limits can change.
+- City mention counts represent keyword matches in the current article feed, not a verified measure of GCC activity.
+- Salary, talent supply, office rent, hiring totals, and incentive savings are not inferred from news counts.
+- Saved data uses a signed anonymous session, not account authentication.
+- The in-memory rate guard is best-effort per serverless instance, not a shared distributed rate limiter.
+- Production readiness requires configuration, security review, durable rate limiting, monitoring, backups, and end-to-end verification appropriate to the deployment.
 
-Configure these environment variables in **Vercel → Project → Settings → Environment Variables**. Do not paste secrets into source files, commit them, or send them in chat.
+See [Production checklist](docs/PRODUCTION_CHECKLIST.md).
 
-| Variable | Required | Purpose |
-|---|---|---|
-| `GROQ_API_KEY` | For live AI | Groq API key, server-side only |
-| `GROQ_MODEL` | Optional | Defaults to `openai/gpt-oss-120b` |
-| `DATABASE_URL_POOLED` | Recommended for Vercel | Neon pooled PostgreSQL connection string |
-| `DATABASE_URL` | Optional fallback | Neon direct PostgreSQL connection string |
-| `SESSION_SECRET` | For saved-data sessions | Long random secret used to sign the HTTP-only session cookie |
+## Product context
 
-After adding variables, redeploy. Never create a `VITE_GROQ_API_KEY` variable; Vite-exposed values are public.
+This repository supports a product-analysis exercise comparing Bengaluru and Hyderabad for an AI-focused GCC. It is an independent project and is **not affiliated with or endorsed by Swiggy**. Any assignment submission should clearly distinguish sourced facts, assumptions, estimates, and recommendations.
 
-## Repository structure
+## Project status
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the folder map, runtime flows, and local verification steps. Frontend helpers that need deterministic behaviour should live in `src/lib/` and have focused tests under `tests/`.
+This project is actively evolving. Review the [CI runs](https://github.com/coder911i/pd-role/actions) and verify the live deployment before relying on a feature. No claim of full production readiness is made solely from a successful build.
 
-## API reference
+<div align="center">
 
-- `GET /api/health` — service and AI configuration status (does not expose secrets).
-- `GET /api/directory?q=&city=&sector=` — filter the reference company list (not a live census of GCC footprints).
-- `GET /api/signals` — retrieve current GCC-related news articles from GDELT DOC 2.0 (last 7 days).
-- `POST /api/chat` — body: `{ "question": "..." }`; returns a Groq answer when configured.
-- `GET /api/session` — creates or reads an anonymous signed session cookie.
-- `GET /api/saved` — list saved companies for the current session.
-- `POST /api/saved` — body: `{ "id": "...", "name": "...", "city": "...", "sector": "..." }`.
-- `DELETE /api/saved` — body: `{ "id": "...", "name": "..." }`.
-- `GET /api/reports` — list up to 50 saved research reports.
-- `POST /api/reports` — body: `{ "title": "...", "prompt": "...", "body": "...", "model": "..." }`.
-- `DELETE /api/reports` — body: `{ "id": "report-uuid" }`.
+**Built to make location research clearer, faster, and easier to verify.**
 
-The saved-company and report endpoints require `DATABASE_URL_POOLED` or `DATABASE_URL`; the pooled URL is preferred for serverless deployments. Their tables are created lazily. The SQL schema is also available at `api/schema.sql`. The anonymous signed cookie is session separation, **not account authentication**. Add a real identity provider before storing sensitive or tenant-specific data. Configure `SESSION_SECRET` in production.
-
-## Quality and data integrity
-
-GitHub Actions runs `npm install`, `npm run build`, and `npm test` on pushes and pull requests. The test suite covers API response contracts, directory filtering, session-cookie integrity, and company logo/article-link helper behaviour. A green CI run is required before calling a change verified; check the Actions tab after a push.
-
-The overview's article feed is live and sourced from GDELT DOC 2.0. Article availability depends on external provider coverage and rate limits. City coverage counts are only keyword matches against article titles/domains, not validated city market metrics. The directory is still a reference list of real companies with official links; its city/sector fields are not continuously verified. Salary, office footprint, hiring totals, cost, and growth metrics are intentionally not fabricated and need authoritative data sources before they can be shown as live facts.
-
-## Current scope and production follow-ups
-
-- Cloud persistence for saved companies and research reports requires a Neon database and environment variables.
-- Saved records are isolated by a signed anonymous browser session; there is no user account/login system yet.
-- GCC-related news is ingested live from GDELT through `/api/signals`; the company directory is a static reference list, not a live footprint census.
-- The in-memory chat rate guard is best-effort per serverless instance, not a shared distributed rate limiter.
-- Before broad public launch, add durable rate limiting (for example Upstash), authentication, monitoring, backups, database migrations, and end-to-end/browser tests.
+</div>
