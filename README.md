@@ -4,10 +4,10 @@ A responsive GCC research workspace built with React, Vite, Three.js, and Vercel
 
 ## Product areas
 
-- **Overview:** dashboard, city comparison preview, and research signals.
+- **Overview:** live GCC-related news headlines fetched through the public GDELT DOC 2.0 API.
 - **GCC directory:** searchable company list with city/sector filters and official-source links.
-- **City intelligence:** interactive city selection and comparison. Scores are clearly illustrative.
-- **Market signals:** sample research prompts and sector themes.
+- **City intelligence:** city-level news mention counts from the live feed; no fabricated talent, cost, or momentum scores.
+- **Market signals:** current article headlines with source domains, publication timestamps when available, and direct links.
 - **AI analyst:** server-side Groq chat through `/api/chat`.
 - **Research library:** saved company shortlist and saved analyst answers.
 - **Mobile and desktop:** responsive navigation, compact mobile cards, reduced-motion support.
@@ -58,7 +58,8 @@ After adding variables, redeploy. Never create a `VITE_GROQ_API_KEY` variable; V
 ## API reference
 
 - `GET /api/health` — service and AI configuration status (does not expose secrets).
-- `GET /api/directory?q=&city=&sector=` — filter the demo company directory.
+- `GET /api/directory?q=&city=&sector=` — filter the reference company list (not a live census of GCC footprints).
+- `GET /api/signals` — retrieve current GCC-related news articles from GDELT DOC 2.0 (last 7 days).
 - `POST /api/chat` — body: `{ "question": "..." }`; returns a Groq answer when configured.
 - `GET /api/session` — creates or reads an anonymous signed session cookie.
 - `GET /api/saved` — list saved companies for the current session.
@@ -74,12 +75,12 @@ The saved-company and report endpoints require `DATABASE_URL_POOLED` or `DATABAS
 
 GitHub Actions runs `npm install`, `npm run build`, and `npm test` on pushes and pull requests. The test suite currently checks session cookie signing and rejection of malformed signatures. A green CI run is required before calling a change verified; check the Actions tab after a push.
 
-The company list, dashboard KPIs, city scores, momentum markers, and signal summaries are **illustrative prototype data**, not verified live market intelligence. Links point to official company websites/newsrooms for further research. Do not use demo scores as real market facts. For a research-grade product, add sourced records with publisher, publication date, methodology, confidence, and refresh timestamps.
+The overview's article feed is live and sourced from GDELT DOC 2.0. Article availability depends on external provider coverage and rate limits. City coverage counts are only keyword matches against article titles/domains, not validated city market metrics. The directory is still a reference list of real companies with official links; its city/sector fields are not continuously verified. Salary, office footprint, hiring totals, cost, and growth metrics are intentionally not fabricated and need authoritative data sources before they can be shown as live facts.
 
 ## Current scope and production follow-ups
 
 - Cloud persistence for saved companies and research reports requires a Neon database and environment variables.
 - Saved records are isolated by a signed anonymous browser session; there is no user account/login system yet.
-- Directory and city intelligence data remain demo data; there is no live external market-data ingestion pipeline yet.
+- GCC-related news is ingested live from GDELT through `/api/signals`; the company directory is a static reference list, not a live footprint census.
 - The in-memory chat rate guard is best-effort per serverless instance, not a shared distributed rate limiter.
 - Before broad public launch, add durable rate limiting (for example Upstash), authentication, monitoring, backups, database migrations, and end-to-end/browser tests.
