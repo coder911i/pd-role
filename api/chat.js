@@ -64,7 +64,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+        model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: question }
@@ -85,7 +85,7 @@ export default async function handler(req, res) {
 
     const answer = payload.choices?.[0]?.message?.content?.trim()
     if (!answer) return res.status(502).json({ error: 'The AI provider returned an empty response. Please try again.' })
-    return res.status(200).json({ answer, model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile' })
+    return res.status(200).json({ answer, model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b' })
   } catch (error) {
     console.error('GCC Intel chat error:', error?.name || 'UnknownError')
     return res.status(504).json({ error: 'The AI request timed out or could not connect. Please try again.' })
