@@ -4,7 +4,9 @@ const COOKIE = 'gcc_session'
 const MAX_AGE = 60 * 60 * 24 * 30
 
 function signature(id) {
-  return createHmac('sha256', process.env.SESSION_SECRET || 'development-only-change-me').update(id).digest('hex')
+  const secret = process.env.SESSION_SECRET
+  if (!secret && process.env.NODE_ENV === 'production') throw new Error('SESSION_SECRET must be configured in production')
+  return createHmac('sha256', secret || 'development-only-change-me').update(id).digest('hex')
 }
 
 export function readSession(req) {
