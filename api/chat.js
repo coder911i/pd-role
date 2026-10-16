@@ -7,6 +7,21 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
+  // Best-effort per-instance abuse guard. Use a shared store (e.g. Redis/Upstash)
+  // for durable rate limiting across serverless instances.
+  const now = Date.now()
+  const forwarded = req.headers['x-forwarded-for']
+  const ip = String(Array.isArray(forwarded) ? forwarded[0] : forwarded || req.socket?.remoteAddress || 'unknown').split(',')[0].trim()
+  const store = globalThis.__gccIntelRateLimit || (globalThis.__gccIntelRateLimit = new Map())
+  const bucket = store.get(ip) || { count: 0, resetAt: now + 10 * 60 * 1000 }
+  if (now > bucket.resetAt) { bucket.count = 0; bucket.resetAt = now + 10 * 60 * 1000 }
+  bucket.count += 1
+  store.set(ip, bucket)
+  if (bucket.count > 20) {
+    res.setHeader('Retry-After', String(Math.ceil((bucket.resetAt - now) / 1000)))
+    return res.status(429).json({ error: 'Too many requests. Please wait a few minutes and try again.' })
+  }
+
   const apiKey = process.env.GROQ_API_KEY
   if (!apiKey) {
     return res.status(503).json({ error: 'Groq is not configured. Add GROQ_API_KEY in the Vercel project environment variables.' })
