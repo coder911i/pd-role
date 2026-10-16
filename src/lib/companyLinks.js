@@ -23,7 +23,7 @@ export function getCompanyDomain(company) {
 
 export function getCompanyLogoUrl(company) {
   const domain = getCompanyDomain(company)
-  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`
+  return `https://cdn.simpleicons.org/${({ 'Microsoft':'microsoft','Google':'google','Amazon':'amazon','JPMorgan Chase':'jpmorgan','Walmart Global Tech':'walmart','Goldman Sachs':'goldmansachs','Bosch':'bosch','Siemens':'siemens','Adobe':'adobe','American Express':'americanexpress','Target':'target','Ericsson':'ericsson','NVIDIA':'nvidia','Wells Fargo':'wellsfargo','Airbus':'airbus','Uber':'uber' })[company.name] || 'google'}`
 }
 
 export function getCompanyArticleUrl(company, liveSignals = []) {
