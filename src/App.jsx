@@ -445,7 +445,6 @@ function App() {
             {reports.length ? <div className="signal-list">{reports.map(report => <div className="signal-item" key={report.id}><div className="signal-symbol blue"><Radar size={16}/></div><div className="signal-text"><strong>{report.title}</strong><p>{report.body}</p><span className="signal-tag">{new Date(report.created_at).toLocaleDateString()}</span></div><button className="icon-button" onClick={() => deleteReport(report)} aria-label="Delete report"><X size={14}/></button></div>)}</div> : <div className="empty-state"><Database size={20}/><strong>No reports saved</strong><span>Ask a research question, then choose “Save latest answer”.</span><button className="text-button" onClick={() => jump('analyst')}>Open research desk <ArrowRight size={13}/></button></div>}
           </article>
         </div>
-        <p className="section-subtitle" style={{marginTop:14}}>Cloud persistence requires a Neon PostgreSQL DATABASE_URL. Without it, saved items use local/session fallback.</p>
       </section>
 
       <footer className="footer"><div className="footer-brand"><div className="brand-mark small"><span/><span/><span/></div><span>gcc<span className="footer-purple">intel</span></span></div><span>BUILT FOR THE NEXT WAVE OF GLOBAL CAPABILITY.</span><div className="footer-right"><span><span className="footer-status"/> SYSTEM ONLINE</span><span>v0.2.0 · LIVE NEWS</span></div></footer>
