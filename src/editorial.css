@@ -421,3 +421,32 @@ tbody tr:hover { background:#f3f3ef !important; }
 #cities .city-detail-card .city-orb svg { color:#4d6bff !important; }
 
 #library > .section-subtitle { display:none !important; }
+
+
+/* Focus-city control: restore readable label and native select contrast */
+#cities .select-wrap {
+  background:#fbfbf9 !important;
+  border:1px solid #d9d9d2 !important;
+  border-radius:6px !important;
+  box-shadow:none !important;
+}
+#cities .select-wrap > span {
+  color:#777870 !important;
+  -webkit-text-fill-color:#777870 !important;
+  opacity:1 !important;
+  font-size:9px !important;
+  font-weight:650 !important;
+  letter-spacing:1px !important;
+}
+#cities .select-wrap select {
+  color:#292a25 !important;
+  -webkit-text-fill-color:#292a25 !important;
+  background:#fbfbf9 !important;
+  border:1px solid #deded8 !important;
+  opacity:1 !important;
+}
+#cities .select-wrap > svg { color:#777870 !important; }
+#cities .select-wrap select option {
+  color:#292a25 !important;
+  background:#fbfbf9 !important;
+}
