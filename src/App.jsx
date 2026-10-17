@@ -43,6 +43,9 @@ const navItems = [
   { id: 'directory', label: 'GCC directory', icon: Building2 },
   { id: 'cities', label: 'City intelligence', icon: Globe2 },
   { id: 'site-lab', label: 'Site selection lab', icon: Target },
+  { id: 'talent-map', label: 'Talent intelligence', icon: Users },
+  { id: 'portfolio', label: 'GCC portfolio model', icon: BarChart3 },
+  { id: 'signal-radar', label: 'Signal impact radar', icon: Radar },
   { id: 'signals', label: 'Market signals', icon: Activity },
   { id: 'analyst', label: 'Research desk', icon: Radar },
   { id: 'library', label: 'Research library', icon: Database }
@@ -221,6 +224,13 @@ function App() {
   const [labSector, setLabSector] = useState('Technology')
   const [labSize, setLabSize] = useState('Large / established')
   const [labExported, setLabExported] = useState(false)
+  const [talentSector, setTalentSector] = useState('AI & Data')
+  const [portfolioCity, setPortfolioCity] = useState('Hyderabad')
+  const [portfolioHeadcount, setPortfolioHeadcount] = useState(500)
+  const [portfolioCost, setPortfolioCost] = useState(1800000)
+  const [portfolioHorizon, setPortfolioHorizon] = useState(3)
+  const [portfolioExported, setPortfolioExported] = useState(false)
+  const [signalFilter, setSignalFilter] = useState('All signals')
 
   useEffect(() => {
     const boot = window.setTimeout(() => setBooting(false), 950)
@@ -480,6 +490,50 @@ function App() {
             <div className="lab-method"><ShieldCheck size={15}/><p><strong>How to read this:</strong> scores use an illustrative 0–100 heuristic and your selected weights. They are not sourced labour-cost data, investment advice or verified live rankings. Validate against hiring plans, salary benchmarks, infrastructure and local incentives.</p></div>
           </div>
         </div>
+      </section>
+
+      <section className="content-section talent-map-section" id="talent-map">
+        <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> TALENT INTELLIGENCE / CITY MATRIX</div><h2>Map the talent behind the market.</h2><p className="section-subtitle">Explore an illustrative capability matrix by city and skill cluster. Use it to frame diligence questions, not as a substitute for current hiring or salary data.</p></div><span className="source-stamp"><Users size={13}/> CAPABILITY EXPLORER</span></div>
+        <div className="talent-toolbar"><div className="talent-sector-tabs">{['AI & Data','Cloud & Platform','Financial technology','Product engineering','Industrial R&D'].map(v=><button key={v} className={talentSector===v?'selected':''} onClick={()=>setTalentSector(v)}>{v}</button>)}</div><span className="talent-disclaimer">Illustrative index · 0–100</span></div>
+        <div className="talent-matrix-wrap"><div className="talent-matrix">
+          <div className="talent-matrix-cell matrix-head">CITY / HUB</div>{['Depth','Ecosystem','Cost fit'].map(h=><div className="talent-matrix-cell matrix-head" key={h}>{h}</div>)}
+          {[
+            {city:'Bengaluru',base:[96,95,52],tags:['AI research & product','Cloud-native teams','Product engineering','Digital finance','Deep-tech R&D']},
+            {city:'Hyderabad',base:[88,88,76],tags:['Enterprise AI','Cloud platforms','Payments & risk','Platform engineering','Life sciences R&D']},
+            {city:'Pune',base:[82,81,78],tags:['Analytics & ML','Cloud operations','Fintech engineering','Embedded software','Industrial automation']},
+            {city:'Chennai',base:[79,78,80],tags:['Data platforms','Enterprise systems','BFSI technology','Automotive software','Automotive R&D']},
+            {city:'Gurugram',base:[84,84,57],tags:['Applied AI','Cloud transformation','Fintech & analytics','Digital products','Engineering services']},
+            {city:'Mumbai',base:[80,89,42],tags:['Financial analytics','Enterprise cloud','Capital markets','Digital product','Industrial engineering']}
+          ].map((r,i)=>{const shift=['AI & Data','Cloud & Platform','Financial technology','Product engineering','Industrial R&D'].indexOf(talentSector);const vals=[Math.max(35,Math.min(98,r.base[0]+[0,2,-2,-3,1][shift])),Math.max(35,Math.min(98,r.base[1]+[1,0,2,-1,1][shift])),r.base[2]];return <React.Fragment key={r.city}><div className="talent-matrix-cell talent-city"><span className={'talent-city-dot dot-'+i}/><div><strong>{r.city}</strong><small>{r.tags[shift]}</small></div></div>{vals.map((v,j)=><div className="talent-matrix-cell talent-value" key={j}><div className="talent-heat" data-level={v>89?'high':v>75?'mid':'low'}><span>{v}</span><i style={{width:v+'%'}}/></div></div>)}</React.Fragment>})}
+        </div></div>
+        <div className="talent-footnotes"><span><i className="heat-key high"/> Higher relative fit</span><span><i className="heat-key mid"/> Mid-range fit</span><span><i className="heat-key low"/> Needs validation</span><p>Index values are heuristic examples created for product exploration; they are not official city-level labour statistics.</p></div>
+        <div className="talent-bottom"><div><span className="panel-kicker">NEXT STEP</span><h3>Turn a talent hypothesis into a diligence plan.</h3></div><button className="secondary-button" onClick={()=>{setQuestion('Build a talent diligence checklist for '+talentSector+' in Indian GCC cities. Separate verifiable facts from assumptions and list primary sources to consult.');jump('analyst')}}>Build diligence checklist <ArrowRight size={14}/></button></div>
+      </section>
+
+      <section className="content-section portfolio-section" id="portfolio">
+        <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> OPERATING MODEL / SCENARIO PLANNER</div><h2>Model the operating footprint.</h2><p className="section-subtitle">Change team size, annual fully-loaded cost and planning horizon to estimate a scenario. All inputs are user assumptions, not market quotations.</p></div><span className="source-stamp"><BarChart3 size={13}/> SCENARIO ENGINE</span></div>
+        <div className="portfolio-grid">
+          <div className="portfolio-controls">
+            <span className="panel-kicker">01 / YOUR ASSUMPTIONS</span>
+            <label className="lab-field">Preferred hub<select value={portfolioCity} onChange={e=>setPortfolioCity(e.target.value)}>{['Bengaluru','Hyderabad','Pune','Chennai','Gurugram','Mumbai'].map(v=><option key={v}>{v}</option>)}</select></label>
+            <label className="portfolio-slider"><span>Planned team size <strong>{portfolioHeadcount.toLocaleString('en-IN')}</strong></span><input type="range" min="50" max="5000" step="50" value={portfolioHeadcount} onChange={e=>setPortfolioHeadcount(Number(e.target.value))}/><small>Full-time equivalent roles</small></label>
+            <label className="portfolio-slider"><span>Annual loaded cost per role <strong>₹{portfolioCost.toLocaleString('en-IN')}</strong></span><input type="range" min="600000" max="4000000" step="50000" value={portfolioCost} onChange={e=>setPortfolioCost(Number(e.target.value))}/><small>Salary, benefits and employer overhead assumption</small></label>
+            <label className="portfolio-slider"><span>Planning horizon <strong>{portfolioHorizon} years</strong></span><input type="range" min="1" max="7" step="1" value={portfolioHorizon} onChange={e=>setPortfolioHorizon(Number(e.target.value))}/><small>Excludes inflation, tax, facilities and ramp-up variance</small></label>
+            <button className="primary-button" onClick={()=>{const csv=[['Metric','Scenario value'],['Preferred hub',portfolioCity],['Team size',portfolioHeadcount],['Annual loaded cost per role INR',portfolioCost],['Annual people cost INR',portfolioHeadcount*portfolioCost],['Planning horizon years',portfolioHorizon],['Cumulative people cost INR',portfolioHeadcount*portfolioCost*portfolioHorizon]].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));const link=document.createElement('a');link.href=url;link.download='gcc-operating-scenario.csv';link.click();URL.revokeObjectURL(url);setPortfolioExported(true);setTimeout(()=>setPortfolioExported(false),2000)}}>{portfolioExported?<Check size={15}/>:<Download size={15}/>} {portfolioExported?'Scenario exported':'Export scenario'}</button>
+          </div>
+          <div className="portfolio-output">
+            <div className="portfolio-orb-stage"><div className="portfolio-orb-ring ring-a"/><div className="portfolio-orb-ring ring-b"/><div className="portfolio-orb-core"><span>OPERATING HUB</span><strong>{portfolioCity}</strong><small>INDIA / GCC</small></div><span className="orb-node node-a"/><span className="orb-node node-b"/><span className="orb-node node-c"/></div>
+            <div className="portfolio-kpis"><article><span>ANNUAL PEOPLE COST</span><strong>₹{(portfolioHeadcount*portfolioCost/10000000).toLocaleString('en-IN',{maximumFractionDigits:2})} Cr</strong><small>At current assumptions</small></article><article><span>{portfolioHorizon}-YEAR PEOPLE COST</span><strong>₹{(portfolioHeadcount*portfolioCost*portfolioHorizon/10000000).toLocaleString('en-IN',{maximumFractionDigits:2})} Cr</strong><small>Flat-cost model</small></article><article><span>PLANNED CAPACITY</span><strong>{portfolioHeadcount.toLocaleString('en-IN')}</strong><small>Full-time equivalent roles</small></article></div>
+            <div className="portfolio-formula"><span className="panel-kicker">MODEL LOGIC</span><code>team size × loaded cost × years</code><p>Use this for directional budgeting only. Add verified compensation benchmarks, real-estate costs, incentives, attrition and hiring ramp assumptions before making an investment decision.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section className="content-section radar-section" id="signal-radar">
+        <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> EVIDENCE TRIAGE / NEWS INTELLIGENCE</div><h2>Separate the signal from the noise.</h2><p className="section-subtitle">A source-linked radar that helps prioritize recent GCC coverage. Impact is a transparent keyword heuristic, not a prediction.</p></div><button className="secondary-button" onClick={retryLiveSignals} disabled={signalsRetrying}>{signalsRetrying?'Refreshing…':<><Activity size={14}/> Refresh live feed</>}</button></div>
+        <div className="radar-overview"><div className="radar-visual"><div className="radar-ring radar-ring-one"/><div className="radar-ring radar-ring-two"/><div className="radar-ring radar-ring-three"/><div className="radar-sweep"/><div className="radar-center"><Radar size={25}/><span>GCC / IN</span></div>{liveSignals.slice(0,12).map((item,i)=><span key={item.id||item.url} className={'radar-point rp-'+i} title={item.title}/>)}</div><div className="radar-side"><span className="panel-kicker">SIGNAL CLASSIFICATION</span><h3>{liveSignals.length} source-linked articles</h3><p>Ranked by relevance terms in the headline. Open each original source before treating it as a business signal.</p><div className="radar-filters">{['All signals','Expansion','AI & technology','Investment','Talent'].map(v=><button key={v} className={signalFilter===v?'selected':''} onClick={()=>setSignalFilter(v)}>{v}</button>)}</div><div className="radar-legend"><span><i className="sig-dot expansion"/> Expansion</span><span><i className="sig-dot tech"/> AI & technology</span><span><i className="sig-dot invest"/> Investment</span><span><i className="sig-dot talent"/> Talent</span></div></div></div>
+        <div className="radar-list">{liveSignals.filter(item=>{const t=(item.title+' '+(item.description||'')).toLowerCase();if(signalFilter==='All signals')return true;if(signalFilter==='Expansion')return /expand|centre|center|facility|office|hub|launch/.test(t);if(signalFilter==='AI & technology')return /ai|artificial intelligence|cloud|digital|technology|data centre/.test(t);if(signalFilter==='Investment')return /invest|billion|million|fund|capital|acquisition/.test(t);return /hire|hiring|talent|workforce|jobs|recruit/.test(t)}).slice(0,8).map((item,i)=>{const t=(item.title+' '+(item.description||'')).toLowerCase();const type=/expand|centre|center|facility|office|hub|launch/.test(t)?'Expansion':/invest|billion|million|fund|capital|acquisition/.test(t)?'Investment':/hire|hiring|talent|workforce|jobs|recruit/.test(t)?'Talent':'AI & technology';const score=Math.min(98,45+(t.match(/gcc|global capability|india|centre|center|ai|hiring|investment|expansion|cloud/g)||[]).length*9+(item.domain?5:0));return <article className="radar-news-row" key={item.id||item.url}><span className="radar-score">{score}<small>FIT</small></span><div className="radar-news-copy"><span className="radar-type">{type.toUpperCase()}</span><strong>{item.title}</strong><small>{item.domain||'Source'}{item.publishedAt?' · '+item.publishedAt:''}</small></div><a href={item.url} target="_blank" rel="noopener noreferrer" aria-label="Open source article"><ExternalLink size={15}/></a></article>})}{!liveSignals.length&&<div className="radar-empty"><Database size={20}/><strong>No live articles available right now.</strong><p>Try refreshing the feed. The radar never fills missing news with synthetic articles.</p><button className="secondary-button" onClick={retryLiveSignals}>Retry feed</button></div>}</div>
+        <p className="radar-disclaimer">Article ranking is based on headline keyword matches and source availability. It does not confirm hiring, investment, centre openings or future business performance.</p>
       </section>
 
       <section className="content-section analyst-section" id="analyst">
