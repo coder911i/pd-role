@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { getCompanyArticleUrl, getCompanyLogoUrl, getCompanyFallbackLogoUrl, getPublisherLogoUrl } from './lib/companyLinks.js'
 import {
-  Activity, ArrowDownRight, ArrowRight, ArrowUpRight, BarChart3, Bell, Bookmark,
+  Activity, ArrowDownRight, ArrowRight, ArrowUpRight, BarChart3, Bell, Bookmark, Download,
   Building2, Check, ChevronDown, CircleHelp, Command, Compass, Database, Download,
   ExternalLink, Filter, Globe2, Layers3, MapPin, Menu, MessageSquareText, Search,
   Send, Settings2, ShieldCheck, Radar, Target, TrendingUp, Users, X, Zap
@@ -42,6 +42,7 @@ const navItems = [
   { id: 'landscape', label: 'Market overview', icon: BarChart3 },
   { id: 'directory', label: 'GCC directory', icon: Building2 },
   { id: 'cities', label: 'City intelligence', icon: Globe2 },
+  { id: 'site-lab', label: 'Site selection lab', icon: Target },
   { id: 'signals', label: 'Market signals', icon: Activity },
   { id: 'analyst', label: 'Research desk', icon: Radar },
   { id: 'library', label: 'Research library', icon: Database }
@@ -214,6 +215,12 @@ function App() {
     { role: 'assistant', text: 'Hi. I’m your GCC research copilot. I can answer from current news coverage when the live feed is available. I will not invent city scores, hiring numbers, or market metrics.' }
   ])
   const [timeframe, setTimeframe] = useState('7 days')
+  const [talentWeight, setTalentWeight] = useState(45)
+  const [costWeight, setCostWeight] = useState(25)
+  const [ecosystemWeight, setEcosystemWeight] = useState(30)
+  const [labSector, setLabSector] = useState('Technology')
+  const [labSize, setLabSize] = useState('Large / established')
+  const [labExported, setLabExported] = useState(false)
 
   useEffect(() => {
     const boot = window.setTimeout(() => setBooting(false), 950)
@@ -424,6 +431,54 @@ function App() {
             <div className="city-disclaimer"><CircleHelp size={14}/> News mentions measure media coverage only; they do not represent GCC count, hiring volume, talent supply, or city cost.</div>
           </div>
           <div className="panel compare-card"><div className="panel-heading"><div><span className="panel-kicker">LIVE COVERAGE COMPARISON</span><h3>News mentions by city.</h3></div><span className="demo-label">{signalsStatus}</span></div><div className="compare-head"><span>CITY</span><span>MENTIONS</span><span>FOCUS</span><span>STATUS</span></div>{cityData.map(c => <button className={'compare-row ' + (selectedCity === c.city ? 'chosen' : '')} key={c.city} onClick={() => setSelectedCity(c.city)}><span className="compare-city"><i style={{background:c.hue}}/>{c.city}</span><span>{citySignalCount(c.city)}</span><span>{c.focus}</span><span className="momentum">{liveSignals.length ? 'LIVE FEED' : 'NO DATA'}</span></button>)}</div>
+        </div>
+      </section>
+
+      <section className="content-section site-lab-section" id="site-lab">
+        <div className="section-heading">
+          <div><div className="eyebrow"><span className="eyebrow-line"/> DECISION SUPPORT / INTERACTIVE MODEL</div><h2>Find your next GCC hub.</h2><p className="section-subtitle">Model a shortlist by changing what matters to your operation. Scores are transparent planning estimates, not official city rankings.</p></div>
+          <span className="source-stamp"><Target size={13}/> SITE SELECTION LAB</span>
+        </div>
+        <div className="site-lab-grid">
+          <div className="site-lab-controls">
+            <div className="lab-panel-head"><span className="panel-kicker">01 / DEFINE YOUR BRIEF</span><span className="lab-live-dot"/> LOCAL MODEL</div>
+            <label className="lab-field"><span>Primary operating sector</span><select value={labSector} onChange={e => setLabSector(e.target.value)}><option>Technology</option><option>Financial services</option><option>Engineering</option><option>Retail technology</option><option>Telecommunications</option></select></label>
+            <label className="lab-field"><span>Centre maturity</span><select value={labSize} onChange={e => setLabSize(e.target.value)}><option>Large / established</option><option>Emerging / lean</option><option>Specialist / R&D</option></select></label>
+            <div className="lab-divider"/>
+            <div className="lab-panel-head"><span className="panel-kicker">02 / WEIGHT YOUR PRIORITIES</span><span className="lab-total">{talentWeight+costWeight+ecosystemWeight}%</span></div>
+            <label className="lab-range"><span>Talent availability <strong>{talentWeight}%</strong></span><input type="range" min="0" max="100" step="5" value={talentWeight} onChange={e=>setTalentWeight(Number(e.target.value))}/><small>Depth of relevant skills and hiring ecosystem</small></label>
+            <label className="lab-range"><span>Operating cost <strong>{costWeight}%</strong></span><input type="range" min="0" max="100" step="5" value={costWeight} onChange={e=>setCostWeight(Number(e.target.value))}/><small>Illustrative cost efficiency preference</small></label>
+            <label className="lab-range"><span>Sector ecosystem <strong>{ecosystemWeight}%</strong></span><input type="range" min="0" max="100" step="5" value={ecosystemWeight} onChange={e=>setEcosystemWeight(Number(e.target.value))}/><small>Relevant peer companies and industry clusters</small></label>
+            <button className="primary-button lab-export" onClick={() => {
+              const weights = talentWeight+costWeight+ecosystemWeight || 1
+              const profiles = [
+                {city:'Bengaluru',talent:96,cost:52,ecosystem:95,focus:'Product engineering, AI, R&D'},
+                {city:'Hyderabad',talent:88,cost:76,ecosystem:88,focus:'Cloud, pharma, enterprise technology'},
+                {city:'Pune',talent:82,cost:78,ecosystem:81,focus:'Engineering, manufacturing, software'},
+                {city:'Chennai',talent:79,cost:80,ecosystem:78,focus:'Automotive, engineering, BFSI'},
+                {city:'Gurugram',talent:84,cost:57,ecosystem:84,focus:'BFSI, consulting, analytics'},
+                {city:'Mumbai',talent:80,cost:42,ecosystem:89,focus:'Financial services, risk, fintech'}
+              ]
+              const rows = profiles.map(p=>({...p,score:Math.round((p.talent*talentWeight+p.cost*costWeight+p.ecosystem*ecosystemWeight)/weights)})).sort((a,b)=>b.score-a.score)
+              const csv = [['Rank','City','Illustrative score','Talent index','Cost efficiency index','Sector ecosystem index','Sector brief','City focus'],...rows.map((p,i)=>[i+1,p.city,p.score,p.talent,p.cost,p.ecosystem,labSector,p.focus])].map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n')
+              const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}))
+              const link=document.createElement('a');link.href=url;link.download='gcc-site-selection-shortlist.csv';link.click();URL.revokeObjectURL(url);setLabExported(true);setTimeout(()=>setLabExported(false),2200)
+            }}>{labExported ? <Check size={15}/> : <Download size={15}/>} {labExported ? 'Shortlist exported' : 'Export shortlist · CSV'}</button>
+          </div>
+          <div className="site-lab-results">
+            <div className="lab-results-top"><div><span className="panel-kicker">03 / YOUR RANKED SHORTLIST</span><h3>City fit, recalculated.</h3><p>Weighted against your current brief · {labSector}</p></div><div className="lab-orbit"><span/><i/><b/></div></div>
+            {[
+              {city:'Bengaluru',talent:96,cost:52,ecosystem:95,focus:'Product engineering · AI · R&D'},
+              {city:'Hyderabad',talent:88,cost:76,ecosystem:88,focus:'Cloud · pharma · enterprise tech'},
+              {city:'Pune',talent:82,cost:78,ecosystem:81,focus:'Engineering · manufacturing'},
+              {city:'Chennai',talent:79,cost:80,ecosystem:78,focus:'Automotive · engineering · BFSI'},
+              {city:'Gurugram',talent:84,cost:57,ecosystem:84,focus:'BFSI · consulting · analytics'},
+              {city:'Mumbai',talent:80,cost:42,ecosystem:89,focus:'Finance · risk · fintech'}
+            ].map(p=>{const total=talentWeight+costWeight+ecosystemWeight||1;const score=Math.round((p.talent*talentWeight+p.cost*costWeight+p.ecosystem*ecosystemWeight)/total);return <article className="lab-result-row" key={p.city}><div className="lab-rank">{String(1+[
+              {city:'Bengaluru',talent:96,cost:52,ecosystem:95},{city:'Hyderabad',talent:88,cost:76,ecosystem:88},{city:'Pune',talent:82,cost:78,ecosystem:81},{city:'Chennai',talent:79,cost:80,ecosystem:78},{city:'Gurugram',talent:84,cost:57,ecosystem:84},{city:'Mumbai',talent:80,cost:42,ecosystem:89}
+            ].filter(q=>Math.round((q.talent*talentWeight+q.cost*costWeight+q.ecosystem*ecosystemWeight)/total)>score).length).padStart(2,'0')}</div><div className="lab-result-main"><div className="lab-result-name">{p.city}<span>{p.focus}</span></div><div className="lab-score-track"><i style={{width:score+'%'}}/></div></div><div className="lab-score">{score}<small>/100</small></div></article>})}
+            <div className="lab-method"><ShieldCheck size={15}/><p><strong>How to read this:</strong> scores use an illustrative 0–100 heuristic and your selected weights. They are not sourced labour-cost data, investment advice or verified live rankings. Validate against hiring plans, salary benchmarks, infrastructure and local incentives.</p></div>
+          </div>
         </div>
       </section>
 
