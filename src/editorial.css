@@ -450,3 +450,33 @@ tbody tr:hover { background:#f3f3ef !important; }
   color:#292a25 !important;
   background:#fbfbf9 !important;
 }
+
+
+/* Directory table: restore dark readable company and city labels on light surface */
+#directory .company-name-link,
+#directory .company-cell strong,
+#directory .company-brand-link,
+#directory tbody td,
+#directory .hub-cell,
+#directory .signal-cell {
+  color:#292a25 !important;
+  -webkit-text-fill-color:#292a25 !important;
+  opacity:1 !important;
+}
+#directory .company-cell span,
+#directory .company-cell p,
+#directory .company-cell .company-subtitle {
+  color:#777870 !important;
+  -webkit-text-fill-color:#777870 !important;
+}
+#directory tbody tr,
+#directory tbody tr:hover {
+  background:#fbfbf9 !important;
+}
+#directory tbody td {
+  border-bottom:1px solid #e7e7e1 !important;
+}
+#directory .company-name-link:hover {
+  color:#11120f !important;
+  -webkit-text-fill-color:#11120f !important;
+}
