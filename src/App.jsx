@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { getCompanyArticleUrl, getCompanyLogoUrl, getCompanyFallbackLogoUrl, getPublisherLogoUrl } from './lib/companyLinks.js'
 import {
-  Activity, ArrowDownRight, ArrowRight, ArrowUpRight, BarChart3, Bell, Bookmark, Download,
+  Activity, ArrowDownRight, ArrowRight, ArrowUpRight, BarChart3, Bell, Bookmark,
   Building2, Check, ChevronDown, CircleHelp, Command, Compass, Database, Download,
   ExternalLink, Filter, Globe2, Layers3, MapPin, Menu, MessageSquareText, Search,
   Send, Settings2, ShieldCheck, Radar, Target, TrendingUp, Users, X, Zap
