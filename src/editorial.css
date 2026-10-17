@@ -344,3 +344,80 @@ tbody tr:hover { background:#f3f3ef !important; }
 @media(prefers-reduced-motion:reduce) {
   *,*::before,*::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
 }
+
+/* Contrast and copy fixes — screenshot review */
+#landscape .city-unit-block,
+#landscape .city-unit-grid,
+#landscape .city-unit-card {
+  background:#f7f7f4 !important;
+  color:#20211d !important;
+}
+#landscape .city-unit-heading h3,
+#landscape .city-unit-card .city-unit-name,
+#landscape .city-unit-card strong,
+#landscape .city-unit-card .city-unit-rank,
+#landscape .city-unit-card .city-unit-card-detail,
+#landscape .city-unit-card span {
+  color:#292a25 !important;
+  -webkit-text-fill-color:#292a25 !important;
+}
+#landscape .city-unit-card .city-unit-track { background:#e1e1db !important; }
+#landscape .city-unit-card .city-unit-track span { background:#55564f !important; }
+#landscape .city-unit-heading .panel-kicker { color:#777870 !important; -webkit-text-fill-color:#777870 !important; }
+#landscape .city-unit-heading a { color:#41423c !important; }
+
+#signals .live-news-panel,
+#signals .live-news-panel .panel-heading {
+  background:#fbfbf9 !important;
+  color:#20211d !important;
+}
+#signals .live-news-panel .panel-heading h3 {
+  color:#20211d !important;
+  -webkit-text-fill-color:#20211d !important;
+}
+#signals .live-news-panel .panel-kicker,
+#signals .live-news-panel .demo-label {
+  color:#73746d !important;
+  -webkit-text-fill-color:#73746d !important;
+}
+#signals .live-news-panel .panel-heading {
+  border-bottom:1px solid #e5e5df !important;
+}
+#cities .city-detail-card,
+#cities .city-detail-card .city-detail-top,
+#cities .city-detail-card .city-detail-top > div {
+  color:#272823 !important;
+}
+#cities .city-detail-card .city-detail-top h3 {
+  color:#20211d !important;
+  -webkit-text-fill-color:#20211d !important;
+  opacity:1 !important;
+}
+#cities .city-detail-card .city-detail-top p {
+  color:#686961 !important;
+  -webkit-text-fill-color:#686961 !important;
+  opacity:1 !important;
+}
+#cities .city-detail-card .panel-kicker,
+#cities .city-detail-card .city-detail-score > span,
+#cities .city-detail-card .city-detail-score small,
+#cities .city-detail-card .city-facts span {
+  color:#777870 !important;
+  -webkit-text-fill-color:#777870 !important;
+  opacity:1 !important;
+}
+#cities .city-detail-card .city-detail-score strong,
+#cities .city-detail-card .city-facts strong {
+  color:#292a25 !important;
+  -webkit-text-fill-color:#292a25 !important;
+  opacity:1 !important;
+}
+#cities .city-detail-card .city-orb {
+  background:#eeeeea !important;
+  color:#4d6bff !important;
+  border-color:#deded8 !important;
+  box-shadow:none !important;
+}
+#cities .city-detail-card .city-orb svg { color:#4d6bff !important; }
+
+#library > .section-subtitle { display:none !important; }
